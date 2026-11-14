@@ -1,0 +1,59 @@
+{
+  "name": "ks-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "快手订单自动同步",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "icon": "node src/tools/make-icon.js",
+    "dist": "electron-builder --win nsis"
+  },
+  "author": "",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.wangzhe.kssync",
+    "productName": "快手订单自动同步",
+    "asar": false,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "!src/tools/**",
+      "!**/node_modules/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "KsSync-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "快手订单自动同步",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerLanguages": [
+        "zh_CN"
+      ],
+      "language": "2052"
+    }
+  }
+}

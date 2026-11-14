@@ -1,0 +1,26 @@
+{
+  "_note": "权威来源是 DealImportOrder 的 0 基位置索引（解析器 headings(false) + 跳过首行，完全不读表头）。public/excel/订单导入模板.xlsx 的表头与此索引存在错位，系历史手工件，不作为依据。仅列出被读取的下标。",
+  "_width": 52,
+  "columns": {
+    "0":  { "field": "oid",               "header": "订单号" },
+    "1":  { "field": "create_time",       "header": "订单创建时间" },
+    "2":  { "field": "pay_time",          "header": "订单支付时间" },
+    "4":  { "field": "order_status",      "header": "订单状态" },
+    "5":  { "field": "actual_payment",    "header": "实付款" },
+    "6":  { "field": "express_fee",       "header": "快递费" },
+    "7":  { "field": "shop_discount",     "header": "店铺优惠" },
+    "8":  { "field": "platform_discount", "header": "平台补贴" },
+    "9":  { "field": "anchor_discount",   "header": "主播补贴" },
+    "11": { "field": "qty",               "header": "成交数量" },
+    "12": { "field": "qty",               "header": "成交数量(旧版兼容)" },
+    "17": { "field": "refund_status",     "header": "售后状态" },
+    "20": { "field": "item_title",        "header": "商品名称" },
+    "21": { "field": "item_id",           "header": "商品ID" },
+    "24": { "field": "price",             "header": "商品单价" },
+    "26": { "field": "distributor_id",    "header": "CPS达人ID" },
+    "27": { "field": "distributor_name",  "header": "CPS达人昵称" },
+    "28": { "field": "commission",        "header": "预估推广佣金" },
+    "29": { "field": "commission_rate",   "header": "预估推广者分佣比例" },
+    "43": { "field": "send_time",         "header": "发货时间" }
+  }
+}
