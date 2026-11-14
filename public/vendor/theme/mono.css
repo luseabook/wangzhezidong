@@ -93,6 +93,12 @@ html.mono body.dcat-admin-body .main-sidebar .navbar-header {
   border-bottom: 1px solid rgba(255, 255, 255, .18);
 }
 
+html.mono body.dcat-admin-body .main-sidebar .navbar-header .logo-lg,
+html.mono body.dcat-admin-body .main-sidebar .navbar-header .logo-mini,
+html.mono body.dcat-admin-body .main-sidebar .navbar-header .navbar-brand * {
+  color: #ffffff !important;
+}
+
 html.mono .brand-mark rect {
   fill: #ffffff !important;
 }
@@ -1664,6 +1670,24 @@ html.mono .content-body {
   gap: 24px;
 }
 
+html.mono .content-body > .row {
+  row-gap: 24px;
+}
+
+html.mono .content-body > .row > [class*="col-"] > .card {
+  height: 100%;
+}
+
+/* 可提现卡是通用 Card，表头比 metric 卡矮一截，拉齐后再让金额/按钮从顶部对齐 */
+html.mono .card.Dcat_Admin_Widgets_Card > .card-header {
+  min-height: 52px;
+}
+
+html.mono .card.Dcat_Admin_Widgets_Card .card-body > .d-flex {
+  min-height: 0 !important;
+  align-items: center;
+}
+
 html.mono .content-body > .row,
 html.mono .content-body > .card,
 html.mono .content-body > .alert,
@@ -1692,6 +1716,19 @@ html.mono .grid-table .table tbody td,
 html.mono .table tbody td {
   border-top: 1px dotted rgba(10, 10, 10, .24);
   padding: 14px 16px;
+}
+
+html.mono .grid-table .table th,
+html.mono .grid-table .table td,
+html.mono .table.mono-master-table th,
+html.mono .table.mono-master-table td {
+  white-space: nowrap;
+}
+
+html.mono .table.mono-master-table thead th,
+html.mono .table.mono-master-table tbody td {
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 html.mono .grid-table .table > tbody > tr:hover {

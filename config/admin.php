@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => '王者管理后台',
+    'name' => '罗伯特',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<img src="/vendor/dcat-admin/images/logo.png" width="35"> &nbsp;管理后台',
+    'logo' => '<img src="/vendor/theme/brand-mono.svg" width="28" alt="罗伯特"> &nbsp;罗伯特',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<img src="/vendor/dcat-admin/images/logo.png">',
+    'logo-mini' => '<img src="/vendor/theme/brand-mono.svg" width="28" alt="罗伯特">',
 
     /*
     |--------------------------------------------------------------------------
@@ -96,7 +96,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => '两个小目标',
+    'title' => '罗伯特',
 
     /*
     |--------------------------------------------------------------------------
