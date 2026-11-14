@@ -31,6 +31,9 @@ Route::group([
     $router->get("master/{id}/chart", 'ChartController@master');
     // 分销者
     $router->resource("master/distributor", 'DistributorController');
+
+    // 待登记达人：订单里出现过但分销者表没有登记的达人号（他们的单算不到佣金）
+    $router->get("distributor/unregistered", 'UnregisteredDistributorController@index');
     // 提现
     $router->resource("master/cash", 'CashController')->except(['destroy']);
     // 达人
