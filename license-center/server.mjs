@@ -33,6 +33,46 @@ const sign = (v) => crypto.createHmac('sha256', SECRET).update(String(v)).digest
 const adminCookie = () => `ks_admin=${sign('admin')}`;
 const isAdmin = (req) => (req.headers.cookie || '').includes(adminCookie());
 
+function adminLoginPage(error = '') {
+  return `<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>授权中心 · 登录</title>
+<link rel="icon" href="data:,">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:#0a0a0a;color:#0a0a0a;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;display:grid;place-items:center;overflow:hidden}
+  body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px);background-size:24px 24px;pointer-events:none}
+  .card{position:relative;z-index:1;width:min(390px,calc(100vw - 32px));background:#fff;padding:30px 30px 24px;box-shadow:0 30px 90px rgba(0,0,0,.55)}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:26px}
+  .mark{width:36px;height:36px;border:1px solid #0a0a0a;display:grid;place-items:center}
+  .mark svg{width:21px;height:21px;stroke:#0a0a0a;fill:none;stroke-width:1.4}
+  .wordmark b{display:block;font-size:14px;font-weight:600;letter-spacing:.04em}
+  .wordmark span{display:block;margin-top:4px;font:9px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.16em;color:#8a8a86}
+  h1{font-size:22px;line-height:1.2;font-weight:600;letter-spacing:-.02em;margin:0}
+  .sub{margin:8px 0 22px;color:#8a8a86;font-size:11.5px;line-height:1.6}
+  label{display:block;font:9px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.14em;color:#8a8a86;margin-bottom:7px}
+  input{width:100%;padding:11px 12px;border:1px solid #deded8;background:#fff;border-radius:0;font:13px/1.4 inherit;color:#0a0a0a;outline:none}
+  input:focus{border-color:#0a0a0a}
+  button{margin-top:16px;width:100%;height:40px;border:1px solid #0a0a0a;background:#0a0a0a;color:#fff;font-size:12px;cursor:pointer;border-radius:999px;letter-spacing:.04em}
+  button:hover{background:#262624}
+  .err{margin:0 0 14px;padding:9px 10px;border-left:2px solid #a83a2a;background:#fbf1ef;color:#a83a2a;font-size:11.5px}
+  .foot{display:flex;justify-content:space-between;gap:10px;margin-top:22px;padding-top:14px;border-top:1px solid #deded8;color:#b4b4ae;font:8.5px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.08em}
+</style></head>
+<body><div class="card">
+  <div class="brand"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 3.5h9.5L19 7v13.5H6z"/><path d="M9 9h7M9 12.5h7M9 16h4.5"/></svg></span>
+    <div class="wordmark"><b>授权中心</b><span>LICENSE LEDGER</span></div></div>
+  <h1>管理后台</h1>
+  <p class="sub">仅限授权管理员访问。请输入管理密码。</p>
+  ${error ? `<div class="err">${error}</div>` : ''}
+  <form method="post" action="${P('/admin/login')}">
+    <label for="password">ADMIN PASSWORD</label>
+    <input id="password" type="password" name="password" placeholder="管理密码" autocomplete="current-password" autofocus required>
+    <button type="submit">进入授权账本</button>
+  </form>
+  <div class="foot"><span>AUTHORIZED ACCESS ONLY</span><span>NODE 24 / SQLITE</span></div>
+</div></body></html>`;
+}
+
 function json(res, code, body) {
   const s = JSON.stringify(body);
   res.writeHead(code, {
@@ -258,17 +298,32 @@ function adminStats() {
 async function handleAdminApi(req, res, url) {
   if (!isAdmin(req)) return json(res, 401, { ok: false, reason: 'UNAUTH' });
 
-  const p = url.pathname.replace('/admin/api/', '');
+  // 反向代理前缀在这里也必须先去掉；否则 BASE_PATH=/lic 时
+  // /lic/admin/api/overview 会被当成 /lic/overview，后台接口全部 404。
+  let path = url.pathname;
+  if (BASE && (path === BASE || path.startsWith(BASE + '/'))) {
+    path = path.slice(BASE.length) || '/';
+  }
+  const p = path.replace('/admin/api/', '');
   const method = req.method;
 
   if (method === 'GET' && p === 'overview') {
     return json(res, 200, {
       ok: true,
+      env: process.env.LICENSE_ENV || process.env.NODE_ENV || 'TEST',
       stats: adminStats(),
       clients: api.listClients(),
       alerts: api.listAlerts({ onlyOpen: true, limit: 50 }),
       switches: { perDay: MAX_SWITCH_PER_DAY, cooldownMin: SWITCH_COOLDOWN_MIN },
     });
+  }
+
+  if (method === 'GET' && p === 'events') {
+    const limit = Math.min(Math.max(Number(url.searchParams.get('limit') || 20), 1), 100);
+    const events = api.q(`SELECT e.*, c.name AS client_name, c.code AS client_code
+                          FROM events e LEFT JOIN clients c ON c.id=e.client_id
+                          ORDER BY e.id DESC LIMIT ?`, limit);
+    return json(res, 200, { ok: true, events });
   }
 
   if (method === 'GET' && p === 'client') {
@@ -348,19 +403,12 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(302, { 'set-cookie': `${adminCookie()}; Path=/; HttpOnly; Max-Age=86400`, location: P('/admin') });
         return res.end();
       }
-      return html(res, 401, `<meta charset="utf-8"><p style="font-family:sans-serif">密码错误，<a href="${P('/admin')}">返回</a></p>`);
+      return html(res, 401, adminLoginPage('密码错误，请重试。'));
     }
 
     if (p === '/admin') {
       if (!isAdmin(req)) {
-        return html(res, 200, `<!doctype html><meta charset="utf-8">
-          <title>授权中心登录</title>
-          <style>body{font-family:"Microsoft YaHei",sans-serif;background:#f5f6f8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
-          form{background:#fff;padding:28px 32px;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-          h1{font-size:16px;margin:0 0 16px}input{width:220px;padding:9px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px}
-          button{margin-top:14px;width:100%;padding:9px;border:0;background:#ff6a00;color:#fff;border-radius:6px;font-size:14px;cursor:pointer}</style>
-          <form method="post" action="${P('/admin/login')}" style="display:flex;flex-direction:column"><h1>授权中心</h1>
-          <input type="password" name="password" placeholder="管理密码" autofocus><button>登录</button></form>`);
+        return html(res, 200, adminLoginPage());
       }
       // 注入 <base>，页面里的相对路径就能在反向代理前缀下正常工作
       const body = fs.readFileSync(ADMIN_HTML, 'utf8').replace('<head>', `<head><base href="${P('/')}">`);
@@ -376,7 +424,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '127.0.0.1', () => {
   console.log(`授权中心已启动: http://127.0.0.1:${PORT}/admin`);
   console.log(`  DB: ${DB_PATH}`);
   console.log(`  每日换店上限: ${MAX_SWITCH_PER_DAY} 次 / 冷却: ${SWITCH_COOLDOWN_MIN} 分钟`);

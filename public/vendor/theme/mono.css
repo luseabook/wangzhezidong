@@ -1720,6 +1720,8 @@ html.mono .table tbody td {
 
 html.mono .grid-table .table th,
 html.mono .grid-table .table td,
+html.mono .table.custom-data-table th,
+html.mono .table.custom-data-table td,
 html.mono .table.mono-master-table th,
 html.mono .table.mono-master-table td {
   white-space: nowrap;

@@ -263,6 +263,22 @@ class CreateMenu extends Command
                 'uri'           => '/product2',
                 'created_at'    => $createdAt,
             ],
+            [
+                'parent_id'     => 0,
+                'order'         => 31,
+                'title'         => '订单变更记录',
+                'icon'          => 'feather icon-clock',
+                'uri'           => 'order/history',
+                'created_at'    => $createdAt,
+            ],
+            [
+                'parent_id'     => 0,
+                'order'         => 32,
+                'title'         => '待登记达人',
+                'icon'          => 'feather icon-user-plus',
+                'uri'           => 'distributor/unregistered',
+                'created_at'    => $createdAt,
+            ],
         ]);
 
         (new Menu())->flushCache();
