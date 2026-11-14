@@ -6,6 +6,7 @@ return [
     ],
     'fields' => [
         'sellerType' => '类型',
+        'source' => '来源',
         'oid' => '订单ID',
         'sellerOpenId' => '店铺ID',
         'sellerNick' => '店铺昵称',

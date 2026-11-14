@@ -30,3 +30,22 @@ Route::group([
     $router->get("distributor", "ApiController@distributor");
     $router->get("product", "ApiController@product");
 });
+
+/*
+|--------------------------------------------------------------------------
+| 快手订单自动同步（本地 KsSync 调用）
+|--------------------------------------------------------------------------
+| 只做「收文件 + 建导入记录 + 派发既有队列」，不改动任何导入解析逻辑。
+*/
+Route::group([
+    'prefix'     => 'ks',
+    'middleware' => [
+        \App\Http\Middleware\KsImportToken::class,
+    ],
+], function (Router $router) {
+    $router->post("import", [\App\Http\Controllers\Api\KsImportController::class, "store"]);
+    $router->get("import/{id}", [\App\Http\Controllers\Api\KsImportController::class, "show"])
+        ->whereNumber("id");
+    $router->get("shop/{id}", [\App\Http\Controllers\Api\KsImportController::class, "shop"])
+        ->whereNumber("id");
+});

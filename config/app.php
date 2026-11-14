@@ -186,4 +186,7 @@ return [
     ])->toArray(),
 
     'api_token' => env("API_TOKEN", ""),
+
+    // 快手订单自动同步专用令牌（与 api_token 隔离）
+    'ks_import_token' => env('KS_IMPORT_TOKEN', ''),
 ];

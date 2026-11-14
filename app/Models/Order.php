@@ -285,6 +285,14 @@ class Order extends Base
     }
 
     /**
+     * 导入批次（用于区分手动/自动来源）
+     */
+    public function log()
+    {
+        return $this->belongsTo(OrderLog::class, "log_id");
+    }
+
+    /**
      * 参与分佣的订单
      */
     public function scopeOfCommission($query, $status=[30, 40, 50, 70])

@@ -25,7 +25,7 @@ class OrderController extends AdminController
     protected function grid()
     {
         $that = $this;
-        $builder = Order::with("product");
+        $builder = Order::with(["product", "log"]);
         return Grid::make($builder, function (Grid $grid) use ($builder, $that) {
             $grid->model()->orderBy("payTime", "desc");
             $grid->column('id')->sortable();
@@ -36,6 +36,9 @@ class OrderController extends AdminController
                     1 => "custom"
                 ]);
             $grid->column('oid');
+            $grid->column('log.source', '来源')
+                ->using([0 => '手动', 1 => '自动'])
+                ->label([0 => 'default', 1 => 'primary']);
             $grid->column('payTime');
             $grid->column('sendTime');
             $grid->column('status')
