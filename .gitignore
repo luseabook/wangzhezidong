@@ -16,3 +16,8 @@
 .DS_Store
 Thumbs.db
 license-center/data/
+
+# 本地 UI 走查环境（不提交）
+/storage/preview.sqlite
+/serve-mono.cmd
+/.claude/

@@ -193,4 +193,7 @@ return [
     // 授权中心（用于回传店铺使用情况；留空则不启用）
     'ks_license_url' => env('KS_LICENSE_URL', ''),
     'ks_client_code' => env('KS_CLIENT_CODE', ''),
+
+    // UI 皮肤：classic（默认，保持现状） / mono（黑白非线性）
+    'ui_skin' => env('UI_SKIN', 'classic'),
 ];

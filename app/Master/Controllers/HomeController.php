@@ -100,6 +100,7 @@ class HomeController extends Controller
 
         return Grid::make($builder, function (Grid $grid) {
             $grid->model()->orderBy('date', 'DESC');
+            $grid->addTableClass('mono-master-table');
             $grid->paginate(10);
 
             $grid->column('id')->sortable();
@@ -150,6 +151,7 @@ class HomeController extends Controller
             ->whereIn("distributorId", $distributor_ids);
 
         return Grid::make($builder, function (Grid $grid) {
+            $grid->addTableClass('mono-master-table');
             $grid->paginate(10);
 
             $grid->column('id')->sortable();

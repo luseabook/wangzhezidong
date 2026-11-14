@@ -38,8 +38,18 @@ Admin::style(
         overflow: hidden;
         display: inline-block;
     }
-CSS            
+CSS
 );
+
+/**
+ * UI 皮肤（可选）：默认 classic，设置 UI_SKIN=mono 后启用黑白非线性皮肤。
+ */
+if (config('app.ui_skin') === 'mono') {
+    Admin::css('/vendor/theme/tokens.css');
+    Admin::css('/vendor/theme/admin.css');
+    Admin::css('/vendor/theme/mono.css');
+    Admin::script("document.documentElement.classList.add('mono');");
+}
 
 /**
  * 处理标题

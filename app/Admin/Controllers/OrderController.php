@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Grid\ImportOrder;
 use App\Admin\Exports\OrderExport;
+use App\Admin\Grid\Displayers\StatusShape;
 use App\Models\Master;
 use App\Models\Order;
 use App\Models\OrderHistory;
@@ -42,12 +43,17 @@ class OrderController extends AdminController
                 ->label([0 => 'default', 1 => 'primary']);
             $grid->column('payTime');
             $grid->column('sendTime');
-            $grid->column('status')
-                ->using(Order::$status)
-                ->label("info");
-            $grid->column('refundStatus')
-                ->using(Order::$refundStatus)
-                ->label("custom");
+            if (config('app.ui_skin') === 'mono') {
+                $grid->column('status')->displayUsing(StatusShape::class, [StatusShape::ORDER]);
+                $grid->column('refundStatus')->displayUsing(StatusShape::class, [StatusShape::REFUND]);
+            } else {
+                $grid->column('status')
+                    ->using(Order::$status)
+                    ->label("info");
+                $grid->column('refundStatus')
+                    ->using(Order::$refundStatus)
+                    ->label("custom");
+            }
             $grid->column('sellerNick')
                 ->limit(3)
                 ->expand(function () {
@@ -74,33 +80,46 @@ class OrderController extends AdminController
             $grid->column('product.price')
                 ->display(function($v) {
                     return $v / 100;
-                });
-            $grid->column('num');
+                })
+                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
+            $grid->column('num')->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
             $grid->column('totalFee')
                 ->display(function($v) {
                     return $v / 100;
-                });
-            $grid->column('rate');
+                })
+                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
+            $grid->column('rate')->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
             $grid->column('cashPrice')
                 ->display(function() {
                     return $this->commissionTotal / 100;
-                });
-            $grid->column('is_rate')
-                ->using(Order::$isRate)
-                ->label([
-                    0 => "danger",
-                    1 => "success",
-                ]);
+                })
+                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
+            if (config('app.ui_skin') === 'mono') {
+                $grid->column('is_rate')->displayUsing(StatusShape::class, [StatusShape::BOOL]);
+            } else {
+                $grid->column('is_rate')
+                    ->using(Order::$isRate)
+                    ->label([
+                        0 => "danger",
+                        1 => "success",
+                    ]);
+            }
             $grid->column('rate1Price')
                 ->display(function() {
                     return $this->commission1 / 100;
-                });
+                })
+                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
             $grid->column('rate2Price')
                 ->display(function() {
                     return $this->commission2 / 100;
-                });
-            $grid->column('cashStatus')
-                ->label("cyan");
+                })
+                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
+            if (config('app.ui_skin') === 'mono') {
+                $grid->column('cashStatus')->displayUsing(StatusShape::class, [StatusShape::CASH]);
+            } else {
+                $grid->column('cashStatus')
+                    ->label("cyan");
+            }
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 

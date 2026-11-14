@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="mono">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MONO / NON-LINEAR · 黑白非线性样张</title>
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/feather/iconfont.css">
+  <link rel="stylesheet" href="../vendor/theme/tokens.css">
+  <link rel="stylesheet" href="../vendor/theme/admin.css">
+  <link rel="stylesheet" href="sample.css">
+  <link rel="stylesheet" href="mono.css">
+</head>
+<body class="mono-index dcat-admin-body">
+
+  <header class="mono-hero">
+    <div class="topline">
+      <div class="brandline">
+        <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+          <rect width="28" height="28" rx="9" fill="#ffffff"></rect>
+          <path d="M9 8.5h10M10.5 13.2h7M10.5 17.9h7M8 22h12" stroke="#0a0a0a" stroke-width="1.8" stroke-linecap="round" opacity=".95"></path>
+        </svg>
+        <div class="brand-copy">
+          <span class="brand-text">百华优品</span>
+          <span class="brand-sub">MONO / NON-LINEAR</span>
+        </div>
+      </div>
+      <a class="hero-link" href="index.html">墨蓝 v2 →</a>
+    </div>
+
+    <h1>MONO<br>NON-LINEAR</h1>
+    <div class="desc">
+      黑白单色 + 非线性排版实验：斜切、错位、点线、单色形状编码。
+      信息结构、尺寸和操作路径与 v2 完全一致，只通过 <code>html.mono</code> 切换皮肤。
+    </div>
+    <div class="meta">
+      <span>01 / MONOCHROME</span>
+      <span>02 / NON-LINEAR</span>
+      <span>03 / SKIN ONLY</span>
+    </div>
+  </header>
+
+  <main class="mono-body">
+
+    <div class="mono-section-label">色彩 / Palette</div>
+    <div class="mono-swatches">
+      <div class="mono-swatch"><div class="chip" style="background:#0A0A0A"></div><div class="name"><span>墨黑</span><code>#0A0A0A</code></div></div>
+      <div class="mono-swatch"><div class="chip" style="background:#000000"></div><div class="name"><span>纯黑</span><code>#000000</code></div></div>
+      <div class="mono-swatch"><div class="chip" style="background:#FFFFFF"></div><div class="name"><span>纸白</span><code>#FFFFFF</code></div></div>
+      <div class="mono-swatch"><div class="chip" style="background:#F4F4F1"></div><div class="name"><span>纸底</span><code>#F4F4F1</code></div></div>
+      <div class="mono-swatch"><div class="chip" style="background:#E7E7E3"></div><div class="name"><span>浅灰</span><code>#E7E7E3</code></div></div>
+      <div class="mono-swatch"><div class="chip" style="background:#8A8A86"></div><div class="name"><span>中灰</span><code>#8A8A86</code></div></div>
+      <div class="mono-swatch"><div class="chip" style="background:#5C5C5A"></div><div class="name"><span>深灰</span><code>#5C5C5A</code></div></div>
+      <div class="mono-swatch"><div class="chip" style="background:#DADAD5"></div><div class="name"><span>点线</span><code>#DADAD5</code></div></div>
+    </div>
+
+    <div class="mono-section-label">语言 / Language</div>
+    <p class="mono-desc">
+      严格单色，不引入第二种颜色。状态通过「实心 / 描边 / 斜纹 / 半填充」区分；
+      卡片只切一个角，奇偶列左右交替；按钮是圆角，输入是方角；表格用点线不要实线；
+      动效统一使用 ease-out-expo 曲线，保证「非线性」的节奏感。
+    </p>
+
+    <div class="mono-rules">
+      <div class="mono-rule">
+        <strong>01 / 单色编码</strong>
+        <span>成功、待处理、关闭、退款用不同填充与纹理表达，不依赖颜色。</span>
+      </div>
+      <div class="mono-rule">
+        <strong>02 / 非对称切角</strong>
+        <span>卡片只切一个角，奇偶列左右交替；圆角按钮与方角输入形成对比。</span>
+      </div>
+      <div class="mono-rule">
+        <strong>03 / 点线与斜切</strong>
+        <span>表格用点线分隔，侧栏选中块斜切 -8deg，打破横平竖直。</span>
+      </div>
+      <div class="mono-rule">
+        <strong>04 / 非线性节奏</strong>
+        <span>悬停与状态切换使用 ease-out-expo，动效不匀速，更有弹性。</span>
+      </div>
+    </div>
+
+    <div class="mono-section-label">组件 / Components</div>
+    <div class="mono-components">
+
+      <div class="mono-comp">
+        <h3>按钮 <span>Buttons</span></h3>
+        <div class="mono-demo-row">
+          <button class="btn btn-primary" type="button">主要操作</button>
+          <button class="btn btn-default" type="button">次要操作</button>
+          <button class="btn btn-danger" type="button">危险操作</button>
+          <button class="btn btn-primary" type="button" disabled>禁用</button>
+        </div>
+        <p class="note">主要操作是圆角胶囊；次要/危险是方角描边；危险操作用虚线边框。</p>
+      </div>
+
+      <div class="mono-comp">
+        <h3>状态 <span>Status</span></h3>
+        <div class="mono-status-list">
+          <span class="status status-green">已结算</span>
+          <span class="status status-amber">待发货</span>
+          <span class="status status-red">退款中</span>
+          <span class="status status-purple">售后中</span>
+          <span class="status status-slate">订单关闭</span>
+        </div>
+        <p class="note">实心 / 描边 / 斜纹 / 半填充 / 灰，五种形状编码，不依赖颜色。</p>
+      </div>
+
+      <div class="mono-comp">
+        <h3>表单 <span>Inputs</span></h3>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <input class="form-control" type="text" placeholder="默认状态">
+          <input class="form-control mono-focus-demo" type="text" value="聚焦状态">
+          <input class="form-control" type="text" value="禁用状态" disabled>
+          <select class="custom-select"><option>下拉选择</option></select>
+        </div>
+        <p class="note">方角、1px 黑边；聚焦时底部 2px 黑线，不用外发光。</p>
+      </div>
+
+      <div class="mono-comp mono-comp-wide">
+        <h3>表格 <span>Table</span></h3>
+        <table class="table mono-demo-table">
+          <thead>
+            <tr>
+              <th>订单号</th>
+              <th>状态</th>
+              <th style="text-align:right;">金额</th>
+              <th>达人</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>3719029950572004864</td>
+              <td><span class="status status-green">已结算</span></td>
+              <td class="money">¥299.70</td>
+              <td>晓涵</td>
+              <td>
+                <a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a>
+                <a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td>3719029950572004781</td>
+              <td><span class="status status-amber">待发货</span></td>
+              <td class="money">¥158.00</td>
+              <td>阿泽</td>
+              <td>
+                <a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a>
+                <a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a>
+              </td>
+            </tr>
+            <tr>
+              <td>3719029950572004399</td>
+              <td><span class="status status-red">退款中</span></td>
+              <td class="money negative">¥159.00</td>
+              <td>小北</td>
+              <td>
+                <a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a>
+                <a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">黑表头反转、行间点线、形状状态；操作按钮是方角图标按钮。</p>
+      </div>
+
+      <div class="mono-comp">
+        <h3>卡片 <span>Card</span></h3>
+        <div class="mono-demo-card">
+          <div class="stat-label">今日订单</div>
+          <div class="stat-value">1,183</div>
+          <div class="stat-meta">较昨日 +8.2%</div>
+        </div>
+        <p class="note">非对称切角、黑色硬阴影、数字等宽；图标使用黑块白线。</p>
+      </div>
+
+      <div class="mono-comp">
+        <h3>弹窗 <span>Modal</span></h3>
+        <div class="mono-modal-preview">
+          <div class="mono-modal-head"><span>申请提现</span><span>×</span></div>
+          <div class="mono-modal-body">可提现金额 ¥12,860.00<br>本次提现 ¥2,000.00</div>
+          <div class="mono-modal-foot">
+            <button class="btn btn-default" type="button">取消</button>
+            <button class="btn btn-primary" type="button">确认</button>
+          </div>
+        </div>
+        <p class="note">黑头弹窗、白身、方角；遮罩为纯黑 62%。</p>
+      </div>
+
+    </div>
+
+    <div class="mono-section-label">页面 / Pages</div>
+    <div class="mono-grid">
+      <a class="mono-card" href="login.html?theme=mono">
+        <div class="num">01</div>
+        <h3>登录</h3>
+        <p>黑底白卡、斜切角、大圆环线框；输入方角、按钮圆角。</p>
+      </a>
+
+      <a class="mono-card" href="dashboard.html?theme=mono">
+        <div class="num">02</div>
+        <h3>仪表盘</h3>
+        <p>黑块图标、错位切角卡片、黑白趋势线与灰度面积。</p>
+      </a>
+
+      <a class="mono-card" href="orders.html?theme=mono">
+        <div class="num">03</div>
+        <h3>订单列表</h3>
+        <p>黑表头反转、点线行、形状编码状态、方角操作按钮。</p>
+      </a>
+
+      <a class="mono-card" href="form.html?theme=mono">
+        <div class="num">04</div>
+        <h3>表单 / 弹窗</h3>
+        <p>方角输入、下划线聚焦、黑头弹窗、虚线危险操作。</p>
+      </a>
+
+      <a class="mono-card" href="master.html?theme=mono">
+        <div class="num">05</div>
+        <h3>达人端</h3>
+        <p>同一套单色语言，可提现卡与统计表同步切换。</p>
+      </a>
+
+      <a class="mono-card" href="index.html">
+        <div class="num">06</div>
+        <h3>回到墨蓝 v2</h3>
+        <p>同一批页面、同一套操作；只切换皮肤，不改任何结构。</p>
+      </a>
+    </div>
+
+    <div class="mono-footer">
+      <span>MONO / NON-LINEAR · 2026</span>
+      <a href="index.html">墨蓝 v2</a>
+    </div>
+
+  </main>
+
+</body>
+</html>

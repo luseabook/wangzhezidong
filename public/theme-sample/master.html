@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>达人中心 · 百华优品</title>
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/feather/iconfont.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/nunito.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/adminlte/adminlte.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/dcat-app.css">
+  <link rel="stylesheet" href="../vendor/theme/tokens.css">
+  <link rel="stylesheet" href="../vendor/theme/master.css">
+  <link rel="stylesheet" href="sample.css">
+  <link rel="stylesheet" href="mono.css">
+  <script>if (/[?&]theme=mono/.test(location.search)) document.documentElement.classList.add('mono');</script>
+</head>
+<body class="dcat-admin-body sidebar-mini layout-fixed portal-master demo">
+
+<div class="wrapper">
+
+  <div class="main-menu">
+    <div class="main-menu-content">
+      <aside class="main-sidebar shadow light">
+        <div class="navbar-header">
+          <ul class="nav navbar-nav flex-row">
+            <li class="nav-item mr-auto">
+              <a href="index.html" class="navbar-brand waves-effect waves-light">
+                <span class="brand-lockup">
+                  <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="brandMark" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#6e8bff"></stop>
+                        <stop offset="1" stop-color="#2f4fd8"></stop>
+                      </linearGradient>
+                    </defs>
+                    <rect width="28" height="28" rx="9" fill="url(#brandMark)"></rect>
+                    <path d="M9 8.5h10M10.5 13.2h7M10.5 17.9h7M8 22h12" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".95"></path>
+                  </svg>
+                  <span class="brand-copy">
+                    <span class="brand-text">达人中心</span>
+                    <span class="brand-sub">CREATOR</span>
+                  </span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar pb-3">
+          <ul class="nav nav-pills nav-sidebar flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="master.html"><i class="feather icon-bar-chart-2"></i><p>数据面板</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-user"></i><p>分销者</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-file-text"></i><p>订单列表</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-credit-card"></i><p>提现明细</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-list"></i><p>流水明细</p></a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-light navbar-shadow">
+    <div class="navbar-wrapper">
+      <div class="navbar-container content">
+        <div class="navbar-collapse d-flex justify-content-between">
+          <div class="navbar-left d-flex align-items-center">
+            <ul class="nav navbar-nav">
+              <li class="nav-item"><a class="nav-link" href="#"><i class="feather icon-menu"></i></a></li>
+            </ul>
+                      </div>
+          <div class="navbar-right d-flex align-items-center">
+            <a class="navbar-icon" href="#"><i class="feather icon-bell"></i></a>
+            <div class="navbar-user">
+              <span class="avatar-sm">晓</span>
+              <span>晓涵</span>
+              <i class="feather icon-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-content content">
+    <div class="content-wrapper" id="app">
+      <section class="content-header breadcrumbs-top">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="master.html">首页</a></li>
+            <li class="breadcrumb-item active">数据面板</li>
+          </ol>
+          <h1>
+            <span class="text-capitalize">数据面板</span>
+            <small>统计数据</small>
+          </h1>
+        </section>
+
+      <div class="content-body">
+
+        <div class="row">
+          <div class="col-md-3">
+            <div class="card master-hero" style="height:100%;">
+              <div class="card-body">
+                <div class="master-amount-label">可提现金额（元）</div>
+                <div class="master-amount">¥12,860.00</div>
+                <div class="master-hero-meta">最近结算 2026-11-14 09:20</div>
+                <div style="margin-top:14px;">
+                  <button class="btn btn-primary" type="button"><i class="feather icon-dollar-sign"></i> 申请提现</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card stat-card" style="height:100%;">
+              <div class="card-body">
+                <div class="stat-label">累计佣金</div>
+                <div class="stat-value">¥46,920.00</div>
+                <div class="stat-meta">已完成 346 单</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card stat-card" style="height:100%;">
+              <div class="card-body">
+                <div class="stat-label">未提现</div>
+                <div class="stat-value">¥18,260.00</div>
+                <div class="stat-meta">含待结算 ¥5,400.00</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card stat-card" style="height:100%;">
+              <div class="card-body">
+                <div class="stat-label">已结算</div>
+                <div class="stat-value">¥28,660.00</div>
+                <div class="stat-meta">累计提现 6 笔</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 达人统计 -->
+        <div class="card master-table">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="card-box-title">达人统计</span>
+            <div class="search-box" style="min-width:200px;height:30px;">
+              <i class="feather icon-search"></i>
+              <input type="text" placeholder="搜索日期">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th class="text-right">有效销售额</th>
+                    <th class="text-right">有效单数</th>
+                    <th class="text-right">预估总佣金</th>
+                    <th class="text-right">预估剩余佣金</th>
+                    <th class="text-right">已结算佣金</th>
+                    <th>更新时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="cell-strong">2026-11-14</td>
+                    <td class="money">¥28,460.00</td>
+                    <td class="money">118</td>
+                    <td class="money">¥1,423.00</td>
+                    <td class="money">¥623.00</td>
+                    <td class="money">¥800.00</td>
+                    <td class="cell-muted">2026-11-14 09:20</td>
+                  </tr>
+                  <tr>
+                    <td class="cell-strong">2026-11-13</td>
+                    <td class="money">¥31,280.00</td>
+                    <td class="money">132</td>
+                    <td class="money">¥1,564.00</td>
+                    <td class="money">¥564.00</td>
+                    <td class="money">¥1,000.00</td>
+                    <td class="cell-muted">2026-11-13 22:10</td>
+                  </tr>
+                  <tr>
+                    <td class="cell-strong">2026-11-12</td>
+                    <td class="money">¥26,940.00</td>
+                    <td class="money">104</td>
+                    <td class="money">¥1,347.00</td>
+                    <td class="money">¥547.00</td>
+                    <td class="money">¥800.00</td>
+                    <td class="cell-muted">2026-11-12 21:40</td>
+                  </tr>
+                  <tr>
+                    <td class="cell-strong">2026-11-11</td>
+                    <td class="money">¥35,120.00</td>
+                    <td class="money">146</td>
+                    <td class="money">¥1,756.00</td>
+                    <td class="money">¥756.00</td>
+                    <td class="money">¥1,000.00</td>
+                    <td class="cell-muted">2026-11-11 23:02</td>
+                  </tr>
+                  <tr>
+                    <td class="cell-strong">2026-11-10</td>
+                    <td class="money">¥22,760.00</td>
+                    <td class="money">96</td>
+                    <td class="money">¥1,138.00</td>
+                    <td class="money">¥538.00</td>
+                    <td class="money">¥600.00</td>
+                    <td class="cell-muted">2026-11-10 22:15</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 我的达人 ID -->
+        <div class="card master-table">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="card-box-title">我的达人 ID</span>
+            <span style="font-size:12px;color:var(--text-muted)">仅统计已启用的达人 ID</span>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>达人 ID</th>
+                    <th class="text-right">累计成交单数</th>
+                    <th class="text-right">累计有效单数</th>
+                    <th class="text-right">累计成交金额</th>
+                    <th class="text-right">累计预估佣金</th>
+                    <th class="text-right">今日可提现</th>
+                    <th>更新时间</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="order-id">140000122179234</td>
+                    <td class="money">862</td>
+                    <td class="money">641</td>
+                    <td class="money">¥182,460.00</td>
+                    <td class="money">¥9,123.00</td>
+                    <td class="money">¥426.00</td>
+                    <td class="cell-muted">2026-11-14 09:20</td>
+                  </tr>
+                  <tr>
+                    <td class="order-id">140000122179235</td>
+                    <td class="money">543</td>
+                    <td class="money">402</td>
+                    <td class="money">¥117,320.00</td>
+                    <td class="money">¥5,866.00</td>
+                    <td class="money">¥318.00</td>
+                    <td class="cell-muted">2026-11-14 09:20</td>
+                  </tr>
+                  <tr>
+                    <td class="order-id">140000122179236</td>
+                    <td class="money">300</td>
+                    <td class="money">140</td>
+                    <td class="money">¥105,323.90</td>
+                    <td class="money">¥3,107.00</td>
+                    <td class="money">¥186.00</td>
+                    <td class="cell-muted">2026-11-14 09:20</td>
+                  </tr>
+                  <tr>
+                    <td class="order-id">140000122179237</td>
+                    <td class="money">—</td>
+                    <td class="money">—</td>
+                    <td class="money">—</td>
+                    <td class="money">—</td>
+                    <td class="money">—</td>
+                    <td class="cell-muted">未启用</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 订单趋势 -->
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-head">
+              <div class="chart-title">订单趋势</div>
+              <div class="chart-range">
+                <span>近 7 天</span><span class="active">近 30 天</span><span>近 90 天</span>
+              </div>
+            </div>
+
+            <svg class="chart-svg" viewBox="0 0 1000 220" role="img" aria-label="订单趋势示意图">
+              <defs>
+                <linearGradient id="masterOrderArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#2f4fd8" stop-opacity=".20"></stop>
+                  <stop offset="1" stop-color="#2f4fd8" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+
+              <line class="chart-grid-line" x1="40" y1="60" x2="980" y2="60"></line>
+              <line class="chart-grid-line" x1="40" y1="120" x2="980" y2="120"></line>
+              <line class="chart-grid-line" x1="40" y1="180" x2="980" y2="180"></line>
+
+              <text class="chart-axis-label" x="4" y="64">200</text>
+              <text class="chart-axis-label" x="4" y="124">100</text>
+              <text class="chart-axis-label" x="4" y="184">0</text>
+
+              <path d="M40,160 C70,156 90,148 110,146 C140,144 160,150 180,148 C210,146 230,128 250,124 C280,118 300,130 320,128 C350,126 370,106 390,102 C420,96 440,110 460,108 C490,106 510,90 530,86 C560,82 580,94 600,92 C630,90 650,74 670,70 C700,66 720,80 740,78 C770,76 790,60 810,56 C840,52 860,64 880,62 C910,60 930,48 950,44 L950,180 L40,180 Z" fill="url(#masterOrderArea)"></path>
+              <path class="chart-line" d="M40,160 C70,156 90,148 110,146 C140,144 160,150 180,148 C210,146 230,128 250,124 C280,118 300,130 320,128 C350,126 370,106 390,102 C420,96 440,110 460,108 C490,106 510,90 530,86 C560,82 580,94 600,92 C630,90 650,74 670,70 C700,66 720,80 740,78 C770,76 790,60 810,56 C840,52 860,64 880,62 C910,60 930,48 950,44"></path>
+
+              <circle class="chart-point-halo" cx="950" cy="44" r="10"></circle>
+              <circle class="chart-point" cx="950" cy="44" r="4"></circle>
+              <text class="chart-callout" x="900" y="30">1,248</text>
+
+              <text class="chart-axis-label" x="34" y="208">11-01</text>
+              <text class="chart-axis-label" x="250" y="208">11-08</text>
+              <text class="chart-axis-label" x="470" y="208">11-16</text>
+              <text class="chart-axis-label" x="690" y="208">11-24</text>
+              <text class="chart-axis-label" x="900" y="208">11-30</text>
+            </svg>
+
+            <div class="chart-legend">
+              <span><i style="background:#2f4fd8"></i>有效订单</span>
+              <span style="color:var(--text-muted)">本月合计 1,248 单</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sample-ribbon">
+  <span>UI 样张</span>
+  <a href="?">墨蓝 v2</a>
+  <a href="?theme=mono">黑白非线性</a>
+  <a href="index.html">索引</a>
+</div>
+
+</body>
+</html>

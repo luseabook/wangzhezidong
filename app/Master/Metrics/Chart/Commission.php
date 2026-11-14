@@ -2,6 +2,7 @@
 
 namespace App\Master\Metrics\Chart;
 
+use App\Admin\Metrics\Concerns\MonochromeChart;
 use App\Models\Distributor;
 use App\Models\Order as ModelsOrder;
 use Dcat\Admin\Admin;
@@ -10,6 +11,8 @@ use Illuminate\Http\Request;
 
 class Commission extends Line
 {
+    use MonochromeChart;
+
     /**
      * @var string
      */
@@ -130,7 +133,7 @@ class Commission extends Line
      */
     public function withCategories(array $data)
     {
-        return $this->chart([
+        $this->chart([
             'colors' => ["#68a67d", "#833500"],
             'xaxis' => [
                 'labels' => [
@@ -153,6 +156,8 @@ class Commission extends Line
                 "radius" => 2,
             ],
         ]);
+
+        return $this->applyMonoChart(['#0a0a0a', '#8a8a86']);
     }
 
     /**

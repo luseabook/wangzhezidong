@@ -2,12 +2,15 @@
 
 namespace App\Admin\Metrics\Charts;
 
+use App\Admin\Metrics\Concerns\MonochromeChart;
 use App\Models\Order as ModelsOrder;
 use Dcat\Admin\Widgets\Metrics\Line;
 use Illuminate\Http\Request;
 
 class Order extends Line
 {
+    use MonochromeChart;
+
     /**
      * @var string
      */
@@ -141,7 +144,7 @@ class Order extends Line
      */
     public function withCategories(array $data)
     {
-        return $this->chart([
+        $this->chart([
             'xaxis' => [
                 'labels' => [
                     'show' => true,
@@ -163,6 +166,8 @@ class Order extends Line
                 "radius" => 2,
             ],
         ]);
+
+        return $this->applyMonoChart(['#0a0a0a', '#5c5c5a', '#8a8a86']);
     }
 
     /**

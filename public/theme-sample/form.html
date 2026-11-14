@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编辑达人 · 百华优品结算系统</title>
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/feather/iconfont.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/nunito.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/adminlte/adminlte.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/dcat-app.css">
+  <link rel="stylesheet" href="../vendor/theme/tokens.css">
+  <link rel="stylesheet" href="../vendor/theme/admin.css">
+  <link rel="stylesheet" href="sample.css">
+  <link rel="stylesheet" href="mono.css">
+  <script>if (/[?&]theme=mono/.test(location.search)) document.documentElement.classList.add('mono');</script>
+</head>
+<body class="dcat-admin-body sidebar-mini layout-fixed portal-admin demo">
+
+<div class="wrapper">
+
+  <div class="main-menu">
+    <div class="main-menu-content">
+      <aside class="main-sidebar shadow light">
+        <div class="navbar-header">
+          <ul class="nav navbar-nav flex-row">
+            <li class="nav-item mr-auto">
+              <a href="index.html" class="navbar-brand waves-effect waves-light">
+                <span class="brand-lockup">
+                  <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="brandMark" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#6e8bff"></stop>
+                        <stop offset="1" stop-color="#2f4fd8"></stop>
+                      </linearGradient>
+                    </defs>
+                    <rect width="28" height="28" rx="9" fill="url(#brandMark)"></rect>
+                    <path d="M9 8.5h10M10.5 13.2h7M10.5 17.9h7M8 22h12" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".95"></path>
+                  </svg>
+                  <span class="brand-copy">
+                    <span class="brand-text">百华优品</span>
+                    <span class="brand-sub">SETTLEMENT</span>
+                  </span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar pb-3">
+          <ul class="nav nav-pills nav-sidebar flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="dashboard.html"><i class="feather icon-bar-chart-2"></i><p>数据面板</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="orders.html"><i class="feather icon-file-text"></i><p>订单列表</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="form.html"><i class="feather icon-users"></i><p>达人管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-shopping-bag"></i><p>商品管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-credit-card"></i><p>提现管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-home"></i><p>店铺管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-settings"></i><p>系统设置</p></a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-light navbar-shadow">
+    <div class="navbar-wrapper">
+      <div class="navbar-container content">
+        <div class="navbar-collapse d-flex justify-content-between">
+          <div class="navbar-left d-flex align-items-center">
+            <ul class="nav navbar-nav">
+              <li class="nav-item"><a class="nav-link" href="#"><i class="feather icon-menu"></i></a></li>
+            </ul>
+                      </div>
+          <div class="navbar-right d-flex align-items-center">
+            <a class="navbar-icon" href="#"><i class="feather icon-bell"></i></a>
+            <div class="navbar-user">
+              <span class="avatar-sm">管</span>
+              <span>管理员</span>
+              <i class="feather icon-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-content content">
+    <div class="content-wrapper" id="app">
+      <section class="content-header breadcrumbs-top">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="dashboard.html">首页</a></li>
+            <li class="breadcrumb-item"><a href="#">达人管理</a></li>
+            <li class="breadcrumb-item active">编辑达人</li>
+          </ol>
+          <h1>
+            <span class="text-capitalize">编辑达人</span>
+            <small>达人管理</small>
+          </h1>
+        </section>
+
+      <div class="content-body">
+
+        <div class="alert alert-info">
+          <i class="feather icon-info"></i>
+          样张：字段、校验与提交逻辑保持原样，这里只展示表单与弹窗的表面样式。
+        </div>
+
+        <div class="card form-card">
+          <div class="card-header">
+            <span class="card-box-title">基本信息</span>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label" for="username">用户名 <span style="color:var(--danger)">*</span></label>
+                  <input type="text" class="form-control" id="username" value="晓涵">
+                  <div class="help-block">登录达人端的账号，保存后不可重复。</div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label">类型</label>
+                  <div style="display:flex;gap:20px;align-items:center;height:38px;">
+                    <div class="form-check" style="margin:0;">
+                      <input class="form-check-input" type="radio" name="type" id="type1" checked>
+                      <label class="form-check-label" for="type1">普通达人</label>
+                    </div>
+                    <div class="form-check" style="margin:0;">
+                      <input class="form-check-input" type="radio" name="type" id="type2">
+                      <label class="form-check-label" for="type2">团队达人</label>
+                    </div>
+                  </div>
+                  <div class="help-block">类型影响下级达人与分佣层级。</div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label" for="password">密码</label>
+                  <input type="password" class="form-control" id="password" placeholder="不修改请留空">
+                  <div class="help-block">长度 5–20 位；留空表示不修改。</div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label" for="password_confirmation">确认密码</label>
+                  <input type="password" class="form-control" id="password_confirmation" placeholder="再次输入密码">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label" for="realname">真实姓名</label>
+                  <input type="text" class="form-control" id="realname" value="张晓涵">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label" for="account">收款账号</label>
+                  <input type="text" class="form-control" id="account" value="6222 **** **** 1234">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section-title">分佣比例</div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label">第一笔佣金比例</label>
+                  <div class="rate-group">
+                    <input type="number" class="form-control" value="50" min="0" max="100">
+                    <span class="rate-suffix">%</span>
+                  </div>
+                  <div class="help-block">订单第一笔佣金在订单总佣金中所占比例。</div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label">第二笔佣金比例</label>
+                  <div class="rate-group">
+                    <input type="number" class="form-control" value="50" min="0" max="100">
+                    <span class="rate-suffix">%</span>
+                  </div>
+                  <div class="help-block">未设置则采用系统设置比例。</div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label">视频号第一笔比例</label>
+                  <div class="rate-group">
+                    <input type="number" class="form-control" value="50" min="0" max="100">
+                    <span class="rate-suffix">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label">视频号第二笔比例</label>
+                  <div class="rate-group">
+                    <input type="number" class="form-control" value="50" min="0" max="100">
+                    <span class="rate-suffix">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label">创建时间</label>
+                  <div style="height:38px;display:flex;align-items:center;color:var(--text-secondary);font-size:13px;">2026-07-31 10:12:08</div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label">更新时间</label>
+                  <div style="height:38px;display:flex;align-items:center;color:var(--text-secondary);font-size:13px;">2026-11-14 09:20:31</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <button class="btn btn-default" type="button">重置</button>
+              <button class="btn btn-primary" type="button"><i class="feather icon-save"></i> 保存</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="card-box-title">弹窗样式</span>
+            <button class="btn btn-primary btn-sm" type="button" onclick="openDemoModal()">
+              <i class="feather icon-dollar-sign"></i> 申请提现
+            </button>
+          </div>
+          <div class="card-body" style="color:var(--text-secondary);font-size:13px;">
+            弹窗沿用现有结构：标题、内容、底部按钮。这里只换遮罩、圆角、按钮与输入框的表面样式。
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 弹窗样张 -->
+<div class="modal-demo">
+  <div class="modal" id="demoModal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">申请提现</h5>
+          <button type="button" class="close" onclick="closeDemoModal()" aria-label="关闭">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="control-label">可提现金额</label>
+            <div class="master-amount" style="font-size:24px;">¥12,860.00</div>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="cashAmount">本次提现金额</label>
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text">¥</span></div>
+              <input type="number" class="form-control" id="cashAmount" value="2000.00">
+            </div>
+            <div class="help-block">单次提现金额不超过当前可提现余额。</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" onclick="closeDemoModal()">取消</button>
+          <button type="button" class="btn btn-primary" onclick="closeDemoModal()">确认提现</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="demoBackdrop" style="display:none;"></div>
+</div>
+
+<div class="sample-ribbon">
+  <span>UI 样张</span>
+  <a href="?">墨蓝 v2</a>
+  <a href="?theme=mono">黑白非线性</a>
+  <a href="index.html">索引</a>
+</div>
+
+<script>
+  function openDemoModal() {
+    document.getElementById('demoModal').style.display = 'block';
+    document.getElementById('demoModal').classList.add('show');
+    document.getElementById('demoBackdrop').style.display = 'block';
+  }
+
+  function closeDemoModal() {
+    document.getElementById('demoModal').style.display = 'none';
+    document.getElementById('demoModal').classList.remove('show');
+    document.getElementById('demoBackdrop').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>

@@ -2,12 +2,15 @@
 
 namespace App\Admin\Metrics\Charts;
 
+use App\Admin\Metrics\Concerns\MonochromeChart;
 use App\Models\Cash as ModelsCash;
 use Dcat\Admin\Widgets\Metrics\Line;
 use Illuminate\Http\Request;
 
 class Cash extends Line
 {
+    use MonochromeChart;
+
     /**
      * @var string
      */
@@ -120,7 +123,7 @@ class Cash extends Line
      */
     public function withCategories(array $data)
     {
-        return $this->chart([
+        $this->chart([
             'xaxis' => [
                 'labels' => [
                     'show' => true,
@@ -142,6 +145,8 @@ class Cash extends Line
                 "radius" => 2,
             ],
         ]);
+
+        return $this->applyMonoChart(['#0a0a0a']);
     }
 
     /**

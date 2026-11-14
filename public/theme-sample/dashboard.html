@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据面板 · 百华优品结算系统</title>
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/feather/iconfont.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/nunito.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/adminlte/adminlte.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/dcat-app.css">
+  <link rel="stylesheet" href="../vendor/theme/tokens.css">
+  <link rel="stylesheet" href="../vendor/theme/admin.css">
+  <link rel="stylesheet" href="sample.css">
+  <link rel="stylesheet" href="mono.css">
+  <script>if (/[?&]theme=mono/.test(location.search)) document.documentElement.classList.add('mono');</script>
+</head>
+<body class="dcat-admin-body sidebar-mini layout-fixed portal-admin demo">
+
+<div class="wrapper">
+
+  <!-- 侧边栏 -->
+  <div class="main-menu">
+    <div class="main-menu-content">
+      <aside class="main-sidebar shadow light">
+        <div class="navbar-header">
+          <ul class="nav navbar-nav flex-row">
+            <li class="nav-item mr-auto">
+              <a href="index.html" class="navbar-brand waves-effect waves-light">
+                <span class="brand-lockup">
+                  <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="brandMark" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#6e8bff"></stop>
+                        <stop offset="1" stop-color="#2f4fd8"></stop>
+                      </linearGradient>
+                    </defs>
+                    <rect width="28" height="28" rx="9" fill="url(#brandMark)"></rect>
+                    <path d="M9 8.5h10M10.5 13.2h7M10.5 17.9h7M8 22h12" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".95"></path>
+                  </svg>
+                  <span class="brand-copy">
+                    <span class="brand-text">百华优品</span>
+                    <span class="brand-sub">SETTLEMENT</span>
+                  </span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar pb-3">
+          <ul class="nav nav-pills nav-sidebar flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="dashboard.html"><i class="feather icon-bar-chart-2"></i><p>数据面板</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="orders.html"><i class="feather icon-file-text"></i><p>订单列表</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="form.html"><i class="feather icon-users"></i><p>达人管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-shopping-bag"></i><p>商品管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-credit-card"></i><p>提现管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-home"></i><p>店铺管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-settings"></i><p>系统设置</p></a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- 顶栏 -->
+  <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-light navbar-shadow">
+    <div class="navbar-wrapper">
+      <div class="navbar-container content">
+        <div class="navbar-collapse d-flex justify-content-between">
+          <div class="navbar-left d-flex align-items-center">
+            <ul class="nav navbar-nav">
+              <li class="nav-item"><a class="nav-link" href="#"><i class="feather icon-menu"></i></a></li>
+            </ul>
+                      </div>
+          <div class="navbar-right d-flex align-items-center">
+            <a class="navbar-icon" href="#"><i class="feather icon-bell"></i></a>
+            <div class="navbar-user">
+              <span class="avatar-sm">管</span>
+              <span>管理员</span>
+              <i class="feather icon-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 内容区 -->
+  <div class="app-content content">
+    <div class="content-wrapper" id="app">
+      <section class="content-header breadcrumbs-top">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="dashboard.html">首页</a></li>
+            <li class="breadcrumb-item active">数据面板</li>
+          </ol>
+          <h1>
+            <span class="text-capitalize">数据面板</span>
+            <small>系统数据统计</small>
+          </h1>
+        </section>
+
+      <div class="content-body">
+
+        <!-- 保持现有列宽：2 / 5 / 5 + 2 / 5 / 5 -->
+        <div class="row">
+          <div class="col-md-2">
+            <div class="card stat-card tight">
+              <div class="card-body">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">达人总数</div>
+                    <div class="stat-value">22</div>
+                  </div>
+                  <span class="stat-icon"><i class="feather icon-users"></i></span>
+                </div>
+                <div class="stat-meta">本月新增 <span class="trend up">+2</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">分销者总数</div>
+                    <div class="stat-value">87</div>
+                  </div>
+                  <span class="stat-icon"><i class="feather icon-share-2"></i></span>
+                </div>
+                <div class="stat-bottom">
+                  <div class="stat-meta">已启用 81 · 待启用 6</div>
+                  <svg class="spark" viewBox="0 0 96 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="sp1" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#2f4fd8" stop-opacity=".18"></stop>
+                        <stop offset="1" stop-color="#2f4fd8" stop-opacity="0"></stop>
+                      </linearGradient>
+                    </defs>
+                    <path d="M2 21 C10 20 14 16 22 17 S34 11 42 13 S54 7 62 9 S74 4 82 6 S90 3 94 3 L94 28 L2 28 Z" fill="url(#sp1)"></path>
+                    <path d="M2 21 C10 20 14 16 22 17 S34 11 42 13 S54 7 62 9 S74 4 82 6 S90 3 94 3" fill="none" stroke="#2f4fd8" stroke-width="1.5" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">店铺总数</div>
+                    <div class="stat-value">5</div>
+                  </div>
+                  <span class="stat-icon"><i class="feather icon-home"></i></span>
+                </div>
+                <div class="stat-bottom">
+                  <div class="stat-meta">今日同步 5/5 · 最近 21:40</div>
+                  <svg class="spark" viewBox="0 0 96 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="sp2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#2f4fd8" stop-opacity=".18"></stop>
+                        <stop offset="1" stop-color="#2f4fd8" stop-opacity="0"></stop>
+                      </linearGradient>
+                    </defs>
+                    <path d="M2 20 C10 21 14 15 22 16 S34 14 42 12 S54 9 62 11 S74 8 82 7 S90 5 94 5 L94 28 L2 28 Z" fill="url(#sp2)"></path>
+                    <path d="M2 20 C10 21 14 15 22 16 S34 14 42 12 S54 9 62 11 S74 8 82 7 S90 5 94 5" fill="none" stroke="#2f4fd8" stroke-width="1.5" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="card stat-card tight">
+              <div class="card-body">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">岗位数</div>
+                    <div class="stat-value">12</div>
+                  </div>
+                  <span class="stat-icon"><i class="feather icon-briefcase"></i></span>
+                </div>
+                <div class="stat-meta">权限正常</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">商品总数</div>
+                    <div class="stat-value">7</div>
+                  </div>
+                  <span class="stat-icon"><i class="feather icon-package"></i></span>
+                </div>
+                <div class="stat-bottom">
+                  <div class="stat-meta">已配置佣金率 6 · 未配置 1</div>
+                  <svg class="spark" viewBox="0 0 96 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="sp3" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#2f4fd8" stop-opacity=".18"></stop>
+                        <stop offset="1" stop-color="#2f4fd8" stop-opacity="0"></stop>
+                      </linearGradient>
+                    </defs>
+                    <path d="M2 22 C10 19 14 20 22 16 S34 15 42 14 S54 10 62 12 S74 8 82 9 S90 6 94 4 L94 28 L2 28 Z" fill="url(#sp3)"></path>
+                    <path d="M2 22 C10 19 14 20 22 16 S34 15 42 14 S54 10 62 12 S74 8 82 9 S90 6 94 4" fill="none" stroke="#2f4fd8" stroke-width="1.5" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">订单总数</div>
+                    <div class="stat-value">1,705</div>
+                  </div>
+                  <span class="stat-icon"><i class="feather icon-shopping-cart"></i></span>
+                </div>
+                <div class="stat-bottom">
+                  <div class="stat-meta">今日 1,183 · <span class="trend up">+8.2%</span></div>
+                  <svg class="spark" viewBox="0 0 96 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="sp4" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#2f4fd8" stop-opacity=".18"></stop>
+                        <stop offset="1" stop-color="#2f4fd8" stop-opacity="0"></stop>
+                      </linearGradient>
+                    </defs>
+                    <path d="M2 23 C10 21 14 18 22 19 S34 13 42 15 S54 9 62 11 S74 6 82 8 S90 4 94 3 L94 28 L2 28 Z" fill="url(#sp4)"></path>
+                    <path d="M2 23 C10 21 14 18 22 19 S34 13 42 15 S54 9 62 11 S74 6 82 8 S90 4 94 3" fill="none" stroke="#2f4fd8" stroke-width="1.5" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 趋势图 -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card chart-card">
+              <div class="card-body">
+                <div class="chart-head">
+                  <div class="chart-title">订单趋势</div>
+                  <div class="chart-range">
+                    <span>近 7 天</span><span class="active">近 30 天</span><span>近 90 天</span>
+                  </div>
+                </div>
+
+                <svg class="chart-svg" viewBox="0 0 1000 220" role="img" aria-label="订单趋势示意图">
+                  <defs>
+                    <linearGradient id="orderArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#2f4fd8" stop-opacity=".20"></stop>
+                      <stop offset="1" stop-color="#2f4fd8" stop-opacity="0"></stop>
+                    </linearGradient>
+                  </defs>
+
+                  <line class="chart-grid-line" x1="40" y1="60" x2="980" y2="60"></line>
+                  <line class="chart-grid-line" x1="40" y1="120" x2="980" y2="120"></line>
+                  <line class="chart-grid-line" x1="40" y1="180" x2="980" y2="180"></line>
+
+                  <text class="chart-axis-label" x="4" y="64">800</text>
+                  <text class="chart-axis-label" x="4" y="124">400</text>
+                  <text class="chart-axis-label" x="4" y="184">0</text>
+
+                  <path d="M40,160 C70,156 90,148 110,146 C140,144 160,150 180,148 C210,146 230,128 250,124 C280,118 300,130 320,128 C350,126 370,106 390,102 C420,96 440,110 460,108 C490,106 510,90 530,86 C560,82 580,94 600,92 C630,90 650,74 670,70 C700,66 720,80 740,78 C770,76 790,60 810,56 C840,52 860,64 880,62 C910,60 930,48 950,44 L950,180 L40,180 Z" fill="url(#orderArea)"></path>
+                  <path class="chart-line" d="M40,160 C70,156 90,148 110,146 C140,144 160,150 180,148 C210,146 230,128 250,124 C280,118 300,130 320,128 C350,126 370,106 390,102 C420,96 440,110 460,108 C490,106 510,90 530,86 C560,82 580,94 600,92 C630,90 650,74 670,70 C700,66 720,80 740,78 C770,76 790,60 810,56 C840,52 860,64 880,62 C910,60 930,48 950,44"></path>
+
+                  <circle class="chart-point-halo" cx="950" cy="44" r="10"></circle>
+                  <circle class="chart-point" cx="950" cy="44" r="4"></circle>
+                  <text class="chart-callout" x="898" y="30">1,183</text>
+
+                  <text class="chart-axis-label" x="34" y="208">08-01</text>
+                  <text class="chart-axis-label" x="250" y="208">08-08</text>
+                  <text class="chart-axis-label" x="470" y="208">08-16</text>
+                  <text class="chart-axis-label" x="690" y="208">08-24</text>
+                  <text class="chart-axis-label" x="900" y="208">08-30</text>
+                </svg>
+
+                <div class="chart-legend">
+                  <span><i style="background:#2f4fd8"></i>订单量</span>
+                  <span style="color:var(--text-muted)">合计 1,705 单</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="card chart-card">
+              <div class="card-body">
+                <div class="chart-head">
+                  <div class="chart-title">提现趋势</div>
+                  <div class="chart-range">
+                    <span>近 7 天</span><span class="active">近 30 天</span><span>近 90 天</span>
+                  </div>
+                </div>
+
+                <svg class="chart-svg" viewBox="0 0 1000 220" role="img" aria-label="提现趋势示意图">
+                  <defs>
+                    <linearGradient id="cashArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#0f6b7a" stop-opacity=".18"></stop>
+                      <stop offset="1" stop-color="#0f6b7a" stop-opacity="0"></stop>
+                    </linearGradient>
+                  </defs>
+
+                  <line class="chart-grid-line" x1="40" y1="60" x2="980" y2="60"></line>
+                  <line class="chart-grid-line" x1="40" y1="120" x2="980" y2="120"></line>
+                  <line class="chart-grid-line" x1="40" y1="180" x2="980" y2="180"></line>
+
+                  <text class="chart-axis-label" x="4" y="64">¥40k</text>
+                  <text class="chart-axis-label" x="4" y="124">¥20k</text>
+                  <text class="chart-axis-label" x="4" y="184">¥0</text>
+
+                  <path d="M40,168 C70,166 90,158 110,156 C140,154 160,160 180,158 C210,156 230,146 250,142 C280,138 300,148 320,146 C350,144 370,128 390,124 C420,120 440,132 460,130 C490,128 510,114 530,110 C560,106 580,116 600,114 C630,112 650,100 670,96 C700,92 720,104 740,102 C770,100 790,86 810,82 C840,78 860,88 880,86 C910,84 930,74 950,70 L950,180 L40,180 Z" fill="url(#cashArea)"></path>
+                  <path class="chart-line-secondary" d="M40,168 C70,166 90,158 110,156 C140,154 160,160 180,158 C210,156 230,146 250,142 C280,138 300,148 320,146 C350,144 370,128 390,124 C420,120 440,132 460,130 C490,128 510,114 530,110 C560,106 580,116 600,114 C630,112 650,100 670,96 C700,92 720,104 740,102 C770,100 790,86 810,82 C840,78 860,88 880,86 C910,84 930,74 950,70"></path>
+
+                  <circle class="chart-point-halo" cx="950" cy="70" r="10" fill="#0f6b7a" opacity=".12"></circle>
+                  <circle class="chart-point" cx="950" cy="70" r="4" fill="#fff" stroke="#0f6b7a" stroke-width="2"></circle>
+                  <text class="chart-callout" x="888" y="56" fill="#0f6b7a">¥9.2k</text>
+
+                  <text class="chart-axis-label" x="34" y="208">08-01</text>
+                  <text class="chart-axis-label" x="250" y="208">08-08</text>
+                  <text class="chart-axis-label" x="470" y="208">08-16</text>
+                  <text class="chart-axis-label" x="690" y="208">08-24</text>
+                  <text class="chart-axis-label" x="900" y="208">08-30</text>
+                </svg>
+
+                <div class="chart-legend">
+                  <span><i style="background:#0f6b7a"></i>提现金额</span>
+                  <span style="color:var(--text-muted)">本月已结算 ¥92,640.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 达人维度卡片：保持现有 4/4/4 排列 -->
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-label">今日订单</div>
+                <div class="stat-value">1,183</div>
+                <div class="stat-meta"><span class="trend up">+8.2%</span> 较昨日</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-label">退款订单</div>
+                <div class="stat-value">17</div>
+                <div class="stat-meta"><span class="trend down">-2.1%</span> 较昨日</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-label">可提现金额</div>
+                <div class="stat-value">¥12,860.00</div>
+                <div class="stat-meta">待审核 3 笔</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-label">第一笔佣金</div>
+                <div class="stat-value">¥9,420.00</div>
+                <div class="stat-meta">已计入 346 单</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-label">第二笔佣金</div>
+                <div class="stat-value">¥6,668.40</div>
+                <div class="stat-meta">已计入 346 单</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card stat-card">
+              <div class="card-body">
+                <div class="stat-label">退款佣金</div>
+                <div class="stat-value">¥126.00</div>
+                <div class="stat-meta">本月累计</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sample-ribbon">
+  <span>UI 样张</span>
+  <a href="?">墨蓝 v2</a>
+  <a href="?theme=mono">黑白非线性</a>
+  <a href="index.html">索引</a>
+</div>
+
+</body>
+</html>

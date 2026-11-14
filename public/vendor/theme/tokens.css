@@ -1,0 +1,745 @@
+/* ==========================================================================
+   百华优品结算系统 · UI Skin v2
+   墨蓝冷灰 · 克制金融感
+   只改视觉层（颜色 / 表面 / 圆角 / 阴影 / 字体质感）
+   布局、尺寸、间距、控件高度与全部交互保持不变。
+   ========================================================================== */
+
+:root {
+  /* 表面 */
+  --bg-page: #f5f6f8;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f8fafc;
+  --bg-hover: #f8fafc;
+  --border: rgba(15, 23, 42, .07);
+  --border-strong: rgba(15, 23, 42, .12);
+
+  /* 文字 */
+  --text-primary: #101828;
+  --text-secondary: #5b6577;
+  --text-muted: #8b94a7;
+
+  /* 品牌与语义 */
+  --brand: #2f4fd8;
+  --brand-hover: #2743bd;
+  --brand-active: #20389f;
+  --brand-soft: #eef2ff;
+  --brand-glow: rgba(47, 79, 216, .18);
+  --success: #1f7a5c;
+  --warning: #a15c0a;
+  --danger: #b4453c;
+  --info: #0f6b7a;
+
+  /* 形状与阴影 */
+  --radius-card: 14px;
+  --radius-control: 8px;
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, .04), 0 20px 40px -28px rgba(15, 23, 42, .18);
+  --shadow-card-hover: 0 2px 6px rgba(15, 23, 42, .06), 0 24px 48px -28px rgba(15, 23, 42, .22);
+  --shadow-modal: 0 24px 64px rgba(15, 23, 42, .28);
+
+  /* 侧边栏 */
+  --sidebar-bg: #0b1424;
+  --sidebar-bg-2: #0f1c31;
+  --sidebar-text: #c8d2e0;
+  --sidebar-muted: #7f8da3;
+  --sidebar-hover: rgba(255, 255, 255, .05);
+  --sidebar-active-bg: rgba(255, 255, 255, .08);
+  --sidebar-active-text: #ffffff;
+  --sidebar-accent: #6e8bff;
+
+  /* 顶栏 */
+  --navbar-bg: rgba(255, 255, 255, .88);
+  --navbar-border: rgba(15, 23, 42, .07);
+
+  /* 表格 */
+  --table-head: transparent;
+  --table-head-text: #667085;
+  --table-row-border: rgba(15, 23, 42, .06);
+  --table-hover: #f8fafc;
+  --table-selected: #f2f6ff;
+}
+
+/* --------------------------------------------------------------------------
+   全局
+   -------------------------------------------------------------------------- */
+
+html body.dcat-admin-body {
+  background-color: var(--bg-page);
+  background-image: radial-gradient(1200px 520px at 50% -18%, rgba(255, 255, 255, .9), transparent 62%);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "MiSans",
+    "HarmonyOS Sans SC", "Source Han Sans SC", "Noto Sans SC", "PingFang SC",
+    "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -.006em;
+}
+
+body.dcat-admin-body ::selection {
+  background: rgba(47, 79, 216, .16);
+}
+
+body.dcat-admin-body ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body.dcat-admin-body ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.dcat-admin-body ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, .18);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}
+
+body.dcat-admin-body ::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, .28);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* --------------------------------------------------------------------------
+   侧边栏
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .main-sidebar,
+body.dcat-admin-body .main-sidebar.light,
+body.dcat-admin-body .main-sidebar.sidebar-light {
+  background-color: var(--sidebar-bg) !important;
+  background-image:
+    radial-gradient(120% 70% at 0% 0%, rgba(110, 139, 255, .14), transparent 58%),
+    linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg-2) 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, .06);
+  box-shadow: none !important;
+}
+
+body.dcat-admin-body .main-sidebar .navbar-header {
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+body.dcat-admin-body .main-sidebar .navbar-header .navbar-brand,
+body.dcat-admin-body .main-sidebar .navbar-header .navbar-brand a {
+  color: var(--sidebar-active-text) !important;
+}
+
+body.dcat-admin-body .main-sidebar .navbar-header img {
+  background: rgba(255, 255, 255, .96);
+  border-radius: 8px;
+  padding: 3px;
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link {
+  color: var(--sidebar-text) !important;
+  border-radius: 10px;
+  font-weight: 500;
+  letter-spacing: .01em;
+  transition: background-color .18s ease, color .18s ease;
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link i {
+  color: var(--sidebar-muted) !important;
+  font-size: 16px;
+  width: 18px;
+  text-align: center;
+  transition: color .18s ease;
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link:hover,
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link:focus {
+  background-color: var(--sidebar-hover) !important;
+  color: var(--sidebar-active-text) !important;
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link:hover i,
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link:focus i {
+  color: var(--sidebar-active-text) !important;
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link.active {
+  background-color: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-text) !important;
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--sidebar-accent);
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-link.active i {
+  color: var(--sidebar-accent) !important;
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-treeview .nav-link {
+  color: var(--sidebar-muted) !important;
+}
+
+body.dcat-admin-body .main-sidebar .nav-sidebar .nav-treeview .nav-link:hover {
+  color: var(--sidebar-active-text) !important;
+}
+
+body.dcat-admin-body .main-sidebar .sidebar,
+body.dcat-admin-body .main-sidebar .main-menu-content {
+  background-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   顶栏
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .header-navbar,
+body.dcat-admin-body .header-navbar.navbar-shadow {
+  background-color: var(--navbar-bg) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--navbar-border) !important;
+  box-shadow: none !important;
+}
+
+body.dcat-admin-body .header-navbar .navbar-container,
+body.dcat-admin-body .header-navbar .nav-link {
+  color: var(--text-secondary) !important;
+}
+
+body.dcat-admin-body .header-navbar .nav-link:hover,
+body.dcat-admin-body .header-navbar .nav-link:focus {
+  color: var(--text-primary) !important;
+  background-color: rgba(15, 23, 42, .04) !important;
+}
+
+body.dcat-admin-body .header-navbar .navbar-right .nav-link {
+  border-radius: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   内容区
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .app-content.content,
+body.dcat-admin-body .content-wrapper,
+body.dcat-admin-body .content-body {
+  background-color: transparent;
+}
+
+body.dcat-admin-body .content-header {
+  background: transparent;
+  border-bottom: 0;
+}
+
+body.dcat-admin-body .content-header h1 {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+body.dcat-admin-body .content-header h1 small,
+body.dcat-admin-body .content-header .text-muted {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+body.dcat-admin-body .breadcrumb {
+  background: transparent;
+  font-size: 12px;
+}
+
+body.dcat-admin-body .breadcrumb .breadcrumb-item a {
+  color: var(--text-secondary);
+}
+
+body.dcat-admin-body .breadcrumb .breadcrumb-item.active {
+  color: var(--text-primary);
+}
+
+body.dcat-admin-body .main-footer {
+  background: transparent;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   卡片 / 面板
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .card,
+body.dcat-admin-body .box,
+body.dcat-admin-body .data-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+body.dcat-admin-body .card-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--border);
+}
+
+body.dcat-admin-body .card-title,
+body.dcat-admin-body .card-box-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -.006em;
+}
+
+body.dcat-admin-body .card-footer {
+  background-color: var(--bg-subtle);
+  border-top: 1px solid var(--border);
+}
+
+body.dcat-admin-body .metric-header,
+body.dcat-admin-body .metric-content {
+  color: var(--text-primary);
+}
+
+body.dcat-admin-body .metric-header {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .02em;
+}
+
+body.dcat-admin-body .metric-content {
+  font-weight: 600;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   按钮
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .btn {
+  border-radius: var(--radius-control);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: .01em;
+  box-shadow: none;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+body.dcat-admin-body .btn-primary {
+  background-color: var(--brand) !important;
+  border-color: var(--brand) !important;
+  color: #fff !important;
+  box-shadow: 0 1px 2px rgba(47, 79, 216, .22), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+
+body.dcat-admin-body .btn-primary:hover,
+body.dcat-admin-body .btn-primary:focus,
+body.dcat-admin-body .btn-primary.focus {
+  background-color: var(--brand-hover) !important;
+  border-color: var(--brand-hover) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 4px rgba(47, 79, 216, .24), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+
+body.dcat-admin-body .btn-primary:active,
+body.dcat-admin-body .btn-primary.active {
+  background-color: var(--brand-active) !important;
+  border-color: var(--brand-active) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, .12);
+}
+
+body.dcat-admin-body .btn-default,
+body.dcat-admin-body .btn-light,
+body.dcat-admin-body .btn-white,
+body.dcat-admin-body .btn-secondary {
+  background-color: var(--bg-surface) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dcat-admin-body .btn-default:hover,
+body.dcat-admin-body .btn-light:hover,
+body.dcat-admin-body .btn-white:hover,
+body.dcat-admin-body .btn-secondary:hover {
+  background-color: var(--bg-hover) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dcat-admin-body .btn-danger {
+  background-color: var(--danger) !important;
+  border-color: var(--danger) !important;
+  color: #fff !important;
+  box-shadow: 0 1px 2px rgba(180, 69, 60, .2);
+}
+
+body.dcat-admin-body .btn-danger:hover,
+body.dcat-admin-body .btn-danger:focus {
+  background-color: #9d3931 !important;
+  border-color: #9d3931 !important;
+}
+
+body.dcat-admin-body .btn-link,
+body.dcat-admin-body a {
+  color: var(--brand);
+}
+
+body.dcat-admin-body .btn-link:hover,
+body.dcat-admin-body a:hover {
+  color: var(--brand-hover);
+}
+
+body.dcat-admin-body .btn:disabled,
+body.dcat-admin-body .btn.disabled {
+  background-color: #eef0f3 !important;
+  border-color: #eef0f3 !important;
+  color: #a3abba !important;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   表单
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .form-control,
+body.dcat-admin-body .custom-select,
+body.dcat-admin-body .select2-selection {
+  background-color: var(--bg-surface);
+  border-color: var(--border-strong);
+  border-radius: var(--radius-control);
+  color: var(--text-primary);
+  font-size: 13px;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, .02);
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+
+body.dcat-admin-body .form-control:focus,
+body.dcat-admin-body .custom-select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-glow), inset 0 1px 2px rgba(15, 23, 42, .02);
+}
+
+body.dcat-admin-body .form-control::placeholder {
+  color: var(--text-muted);
+}
+
+body.dcat-admin-body .control-label,
+body.dcat-admin-body .form-group label,
+body.dcat-admin-body .col-form-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+
+body.dcat-admin-body .help-block,
+body.dcat-admin-body .text-help {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+body.dcat-admin-body .input-group-text {
+  background-color: var(--bg-subtle);
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+body.dcat-admin-body .invalid-feedback,
+body.dcat-admin-body .text-danger {
+  color: var(--danger) !important;
+}
+
+body.dcat-admin-body .form-control.is-invalid {
+  border-color: var(--danger);
+}
+
+/* --------------------------------------------------------------------------
+   表格
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .table {
+  color: var(--text-primary);
+}
+
+body.dcat-admin-body .table thead th {
+  background-color: transparent !important;
+  color: var(--table-head-text) !important;
+  border-top: 0;
+  border-bottom: 1px solid var(--border) !important;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+body.dcat-admin-body .table td,
+body.dcat-admin-body .table th {
+  border-top-color: var(--table-row-border);
+}
+
+body.dcat-admin-body .table-hover tbody tr:hover {
+  background-color: var(--table-hover) !important;
+}
+
+body.dcat-admin-body .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #fbfcfd;
+}
+
+body.dcat-admin-body .grid-table .table {
+  margin-bottom: 0;
+}
+
+body.dcat-admin-body .grid-table .table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+body.dcat-admin-body .grid-table .table > tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   标签 / 徽章
+   只改形状，不覆盖 dcat 的内联背景色
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .label,
+body.dcat-admin-body .badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: .02em;
+}
+
+/* --------------------------------------------------------------------------
+   分页 / 下拉 / 弹窗 / 提示
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .pagination .page-link {
+  color: var(--text-secondary);
+  border-color: var(--border);
+  background-color: var(--bg-surface);
+  border-radius: 6px;
+  font-size: 12px;
+  margin: 0 2px;
+}
+
+body.dcat-admin-body .pagination .page-item.active .page-link {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(47, 79, 216, .24);
+}
+
+body.dcat-admin-body .pagination .page-link:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+body.dcat-admin-body .dropdown-menu {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .12);
+  padding: 6px;
+}
+
+body.dcat-admin-body .dropdown-item {
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+body.dcat-admin-body .dropdown-item:hover,
+body.dcat-admin-body .dropdown-item:focus {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+body.dcat-admin-body .modal-content {
+  border: 1px solid rgba(15, 23, 42, .06);
+  border-radius: 16px;
+  box-shadow: var(--shadow-modal);
+}
+
+body.dcat-admin-body .modal-header {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px;
+}
+
+body.dcat-admin-body .modal-title {
+  font-weight: 600;
+  letter-spacing: -.006em;
+}
+
+body.dcat-admin-body .modal-body {
+  padding: 20px 24px 8px;
+}
+
+body.dcat-admin-body .modal-footer {
+  background-color: var(--bg-subtle);
+  border-top: 1px solid var(--border);
+  padding: 14px 24px;
+  border-radius: 0 0 16px 16px;
+}
+
+body.dcat-admin-body .modal-backdrop.show {
+  opacity: .45;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+body.dcat-admin-body .alert {
+  border-radius: 10px;
+  border-width: 1px;
+  font-size: 13px;
+}
+
+body.dcat-admin-body .alert-info {
+  background-color: #eef2ff;
+  border-color: rgba(47, 79, 216, .15);
+  color: #2f4fd8;
+}
+
+body.dcat-admin-body .alert-success {
+  background-color: #eef8f3;
+  border-color: rgba(31, 122, 92, .16);
+  color: #1f7a5c;
+}
+
+body.dcat-admin-body .alert-warning {
+  background-color: #fdf6e9;
+  border-color: rgba(161, 92, 10, .16);
+  color: #a15c0a;
+}
+
+body.dcat-admin-body .alert-danger {
+  background-color: #fdf0ef;
+  border-color: rgba(180, 69, 60, .16);
+  color: #b4453c;
+}
+
+body.dcat-admin-body .nav-tabs {
+  border-bottom-color: var(--border);
+}
+
+body.dcat-admin-body .nav-tabs .nav-link {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+body.dcat-admin-body .nav-tabs .nav-link.active {
+  color: var(--brand);
+  border-color: transparent transparent var(--brand);
+  border-bottom-width: 2px;
+  background: transparent;
+}
+
+body.dcat-admin-body .empty,
+body.dcat-admin-body .empty-data {
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   登录页
+   -------------------------------------------------------------------------- */
+
+.login-page {
+  background-color: #07101e;
+}
+
+.login-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #07101e;
+  background-image:
+    radial-gradient(1000px 640px at 18% 8%, rgba(47, 79, 216, .30), transparent 62%),
+    radial-gradient(900px 600px at 84% 92%, rgba(15, 107, 122, .20), transparent 62%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, .028) 0, rgba(255, 255, 255, .028) 1px, transparent 1px, transparent 44px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .028) 0, rgba(255, 255, 255, .028) 1px, transparent 1px, transparent 44px);
+}
+
+.login-box {
+  position: relative;
+  z-index: 1;
+}
+
+body.dcat-admin-body .login-page .login-box {
+  margin-top: 0 !important;
+}
+
+.login-logo {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+
+.login-page .card {
+  border: 1px solid rgba(15, 23, 42, .06);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .35);
+}
+
+body.dcat-admin-body .login-page .card,
+body.dcat-admin-body .login-page .card-body {
+  border-radius: 16px;
+}
+
+body.dcat-admin-body .login-page .login-card-body {
+  padding: 30px 32px 28px;
+}
+
+.login-page .login-box-msg {
+  color: var(--text-secondary);
+  font-size: 13px;
+  letter-spacing: .01em;
+}
+
+.login-page .form-control {
+  border-color: var(--border-strong);
+  border-radius: var(--radius-control);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, .02);
+}
+
+.login-page .form-control:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-glow), inset 0 1px 2px rgba(15, 23, 42, .02);
+}
+
+.login-page .btn-primary {
+  border-radius: var(--radius-control);
+  box-shadow: 0 1px 2px rgba(47, 79, 216, .24), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+
+.login-page .form-label-group > label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.login-page .form-control-position i,
+.login-page .feather {
+  color: var(--text-muted);
+}
+
+.login-page .text-dark,
+.login-page a.text-dark {
+  color: rgba(255, 255, 255, .55) !important;
+}
+
+/* --------------------------------------------------------------------------
+   兼容 dcat 主题变量
+   -------------------------------------------------------------------------- */
+
+body.dcat-admin-body .bg-primary {
+  background-color: var(--brand) !important;
+}
+
+body.dcat-admin-body .text-primary {
+  color: var(--brand) !important;
+}
+
+body.dcat-admin-body .border-primary {
+  border-color: var(--brand) !important;
+}

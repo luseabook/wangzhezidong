@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>订单列表 · 百华优品结算系统</title>
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/fonts/feather/iconfont.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/nunito.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/adminlte/adminlte.css">
+  <link rel="stylesheet" href="../vendor/dcat-admin/dcat/css/dcat-app.css">
+  <link rel="stylesheet" href="../vendor/theme/tokens.css">
+  <link rel="stylesheet" href="../vendor/theme/admin.css">
+  <link rel="stylesheet" href="sample.css">
+  <link rel="stylesheet" href="mono.css">
+  <script>if (/[?&]theme=mono/.test(location.search)) document.documentElement.classList.add('mono');</script>
+</head>
+<body class="dcat-admin-body sidebar-mini layout-fixed portal-admin demo">
+
+<div class="wrapper">
+
+  <div class="main-menu">
+    <div class="main-menu-content">
+      <aside class="main-sidebar shadow light">
+        <div class="navbar-header">
+          <ul class="nav navbar-nav flex-row">
+            <li class="nav-item mr-auto">
+              <a href="index.html" class="navbar-brand waves-effect waves-light">
+                <span class="brand-lockup">
+                  <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="brandMark" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#6e8bff"></stop>
+                        <stop offset="1" stop-color="#2f4fd8"></stop>
+                      </linearGradient>
+                    </defs>
+                    <rect width="28" height="28" rx="9" fill="url(#brandMark)"></rect>
+                    <path d="M9 8.5h10M10.5 13.2h7M10.5 17.9h7M8 22h12" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".95"></path>
+                  </svg>
+                  <span class="brand-copy">
+                    <span class="brand-text">百华优品</span>
+                    <span class="brand-sub">SETTLEMENT</span>
+                  </span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar pb-3">
+          <ul class="nav nav-pills nav-sidebar flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="dashboard.html"><i class="feather icon-bar-chart-2"></i><p>数据面板</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="orders.html"><i class="feather icon-file-text"></i><p>订单列表</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="form.html"><i class="feather icon-users"></i><p>达人管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-shopping-bag"></i><p>商品管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-credit-card"></i><p>提现管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-home"></i><p>店铺管理</p></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="feather icon-settings"></i><p>系统设置</p></a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-light navbar-shadow">
+    <div class="navbar-wrapper">
+      <div class="navbar-container content">
+        <div class="navbar-collapse d-flex justify-content-between">
+          <div class="navbar-left d-flex align-items-center">
+            <ul class="nav navbar-nav">
+              <li class="nav-item"><a class="nav-link" href="#"><i class="feather icon-menu"></i></a></li>
+            </ul>
+                      </div>
+          <div class="navbar-right d-flex align-items-center">
+            <a class="navbar-icon" href="#"><i class="feather icon-bell"></i></a>
+            <div class="navbar-user">
+              <span class="avatar-sm">管</span>
+              <span>管理员</span>
+              <i class="feather icon-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-content content">
+    <div class="content-wrapper" id="app">
+      <section class="content-header breadcrumbs-top">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="dashboard.html">首页</a></li>
+            <li class="breadcrumb-item"><a href="#">订单中心</a></li>
+            <li class="breadcrumb-item active">订单列表</li>
+          </ol>
+          <h1>
+            <span class="text-capitalize">订单列表</span>
+            <small>订单中心</small>
+          </h1>
+        </section>
+
+      <div class="content-body">
+
+        <!-- 筛选面板：字段与位置保持现有结构 -->
+        <div class="card filter-panel">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <div class="filter-label">订单编号</div>
+                  <input type="text" class="form-control" placeholder="输入订单编号">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <div class="filter-label">店铺昵称</div>
+                  <input type="text" class="form-control" placeholder="输入店铺昵称">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <div class="filter-label">达人 ID</div>
+                  <input type="text" class="form-control" placeholder="输入达人 ID">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <div class="filter-label">商品 ID</div>
+                  <input type="text" class="form-control" placeholder="输入商品 ID">
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <div class="filter-label">订单状态</div>
+                  <select class="custom-select">
+                    <option>全部状态</option>
+                    <option>待付款</option>
+                    <option>待发货</option>
+                    <option>已发货</option>
+                    <option>已收货</option>
+                    <option>交易成功</option>
+                    <option>订单关闭</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <div class="filter-label">是否计佣</div>
+                  <select class="custom-select">
+                    <option>全部</option>
+                    <option>是</option>
+                    <option>否</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <div class="filter-label">支付时间</div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <input type="date" class="form-control" value="2026-08-01">
+                    <span style="color:var(--text-muted)">至</span>
+                    <input type="date" class="form-control" value="2026-08-30">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <div class="form-group" style="width:100%;padding-top:21px;">
+                  <button class="btn btn-primary btn-block" type="button"><i class="feather icon-search"></i> 查询</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:8px;">
+              <button class="btn btn-default btn-sm" type="button">重置</button>
+              <button class="btn btn-default btn-sm" type="button">收起筛选</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 工具条 -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <select class="custom-select" style="width:140px;height:34px;font-size:13px;">
+              <option>批量操作</option>
+              <option>导出所选</option>
+            </select>
+            <button class="btn btn-default btn-sm" type="button"><i class="feather icon-download"></i> 导出</button>
+            <button class="btn btn-default btn-sm" type="button"><i class="feather icon-columns"></i> 列选择</button>
+          </div>
+          <div class="toolbar-right">
+            <div class="search-box">
+              <i class="feather icon-search"></i>
+              <input type="text" placeholder="快捷搜索：订单号 / 达人 ID / 商品 ID">
+            </div>
+            <button class="btn btn-primary btn-sm" type="button"><i class="feather icon-refresh-cw"></i> 刷新</button>
+          </div>
+        </div>
+
+        <!-- 表格：实际列更多，保留横向滚动与列选择 -->
+        <div class="card table-card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover" style="min-width: 2100px;">
+                <thead>
+                  <tr>
+                    <th style="width:36px;"><input type="checkbox"></th>
+                    <th>ID</th>
+                    <th>店铺类型</th>
+                    <th>订单编号</th>
+                    <th>来源</th>
+                    <th>支付时间</th>
+                    <th>发货时间</th>
+                    <th>状态</th>
+                    <th>售后</th>
+                    <th>店铺昵称</th>
+                    <th>达人 ID</th>
+                    <th>达人昵称</th>
+                    <th>商品 ID</th>
+                    <th>商品名称</th>
+                    <th class="text-right">单价</th>
+                    <th class="text-right">数量</th>
+                    <th class="text-right">订单金额</th>
+                    <th class="text-right">佣金比例</th>
+                    <th class="text-right">预估佣金</th>
+                    <th>计佣</th>
+                    <th class="text-right">第一笔</th>
+                    <th class="text-right">第二笔</th>
+                    <th>提现状态</th>
+                    <th>创建时间</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8901</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572004864</td>
+                    <td><span class="pill pill-blue">自动</span></td>
+                    <td class="cell-muted">08-28 10:12</td>
+                    <td class="cell-muted">08-28 18:20</td>
+                    <td><span class="pill pill-blue">已发货</span></td>
+                    <td class="cell-muted">无</td>
+                    <td>2号店 罗伯特</td>
+                    <td>140000122179234</td>
+                    <td>晓涵</td>
+                    <td class="cell-muted">P-100238</td>
+                    <td>夏季轻薄防晒外套</td>
+                    <td class="money">¥99.90</td>
+                    <td class="money">3</td>
+                    <td class="money">¥299.70</td>
+                    <td class="money muted">5%</td>
+                    <td class="money">¥14.99</td>
+                    <td><span class="pill pill-green">是</span></td>
+                    <td class="money">¥7.49</td>
+                    <td class="money">¥7.49</td>
+                    <td><span class="pill pill-gray">待结算</span></td>
+                    <td class="cell-muted">08-28 10:12</td>
+                    <td class="cell-muted">08-28 18:20</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8900</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572004781</td>
+                    <td><span class="pill pill-blue">自动</span></td>
+                    <td class="cell-muted">08-28 09:48</td>
+                    <td class="cell-muted">08-28 17:02</td>
+                    <td><span class="pill pill-green">交易成功</span></td>
+                    <td class="cell-muted">无</td>
+                    <td>菠萝荔枝</td>
+                    <td>140000122179235</td>
+                    <td>阿泽</td>
+                    <td class="cell-muted">P-100231</td>
+                    <td>轻量运动短裤</td>
+                    <td class="money">¥79.00</td>
+                    <td class="money">2</td>
+                    <td class="money">¥158.00</td>
+                    <td class="money muted">5%</td>
+                    <td class="money">¥7.90</td>
+                    <td><span class="pill pill-green">是</span></td>
+                    <td class="money">¥3.95</td>
+                    <td class="money">¥3.95</td>
+                    <td><span class="pill pill-green">已结算</span></td>
+                    <td class="cell-muted">08-28 09:48</td>
+                    <td class="cell-muted">08-29 09:14</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8899</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572004692</td>
+                    <td><span class="pill pill-gray">手动</span></td>
+                    <td class="cell-muted">08-27 21:35</td>
+                    <td class="cell-muted">—</td>
+                    <td><span class="pill pill-amber">待发货</span></td>
+                    <td class="cell-muted">无</td>
+                    <td>晓涵3号</td>
+                    <td>140000122179236</td>
+                    <td>小北</td>
+                    <td class="cell-muted">P-100225</td>
+                    <td>纯棉基础打底衫</td>
+                    <td class="money">¥59.00</td>
+                    <td class="money">1</td>
+                    <td class="money">¥59.00</td>
+                    <td class="money muted">5%</td>
+                    <td class="money">¥2.95</td>
+                    <td><span class="pill pill-gray">否</span></td>
+                    <td class="money muted">¥0.00</td>
+                    <td class="money muted">¥0.00</td>
+                    <td><span class="pill pill-gray">待结算</span></td>
+                    <td class="cell-muted">08-27 21:35</td>
+                    <td class="cell-muted">08-28 10:20</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8898</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572004510</td>
+                    <td><span class="pill pill-blue">自动</span></td>
+                    <td class="cell-muted">08-27 16:08</td>
+                    <td class="cell-muted">08-27 20:44</td>
+                    <td><span class="pill pill-slate">订单关闭</span></td>
+                    <td class="cell-muted">无</td>
+                    <td>2号店 罗伯特</td>
+                    <td>140000122179237</td>
+                    <td>阿泽</td>
+                    <td class="cell-muted">P-100219</td>
+                    <td>冰丝透气T恤</td>
+                    <td class="money">¥69.00</td>
+                    <td class="money">1</td>
+                    <td class="money">¥69.00</td>
+                    <td class="money muted">5%</td>
+                    <td class="money muted">¥0.00</td>
+                    <td><span class="pill pill-gray">否</span></td>
+                    <td class="money muted">¥0.00</td>
+                    <td class="money muted">¥0.00</td>
+                    <td><span class="pill pill-gray">—</span></td>
+                    <td class="cell-muted">08-27 16:08</td>
+                    <td class="cell-muted">08-28 08:02</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8897</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572004399</td>
+                    <td><span class="pill pill-blue">自动</span></td>
+                    <td class="cell-muted">08-27 12:26</td>
+                    <td class="cell-muted">08-27 19:10</td>
+                    <td><span class="pill pill-teal">已收货</span></td>
+                    <td><span class="pill pill-red">退款中</span></td>
+                    <td>菠萝荔枝</td>
+                    <td>140000122179238</td>
+                    <td>小北</td>
+                    <td class="cell-muted">P-100204</td>
+                    <td>复古水洗牛仔外套</td>
+                    <td class="money">¥159.00</td>
+                    <td class="money">1</td>
+                    <td class="money">¥159.00</td>
+                    <td class="money muted">5%</td>
+                    <td class="money negative">-¥7.95</td>
+                    <td><span class="pill pill-green">是</span></td>
+                    <td class="money negative">-¥3.98</td>
+                    <td class="money negative">-¥3.97</td>
+                    <td><span class="pill pill-red">已冲回</span></td>
+                    <td class="cell-muted">08-27 12:26</td>
+                    <td class="cell-muted">08-28 14:31</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8896</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572004217</td>
+                    <td><span class="pill pill-blue">自动</span></td>
+                    <td class="cell-muted">08-26 19:52</td>
+                    <td class="cell-muted">08-27 11:06</td>
+                    <td><span class="pill pill-purple">售后中</span></td>
+                    <td><span class="pill pill-amber">换货</span></td>
+                    <td>晓涵3号</td>
+                    <td>140000122179239</td>
+                    <td>晓涵</td>
+                    <td class="cell-muted">P-100198</td>
+                    <td>高腰直筒休闲裤</td>
+                    <td class="money">¥129.00</td>
+                    <td class="money">2</td>
+                    <td class="money">¥258.00</td>
+                    <td class="money muted">5%</td>
+                    <td class="money">¥12.90</td>
+                    <td><span class="pill pill-green">是</span></td>
+                    <td class="money">¥6.45</td>
+                    <td class="money">¥6.45</td>
+                    <td><span class="pill pill-gray">待结算</span></td>
+                    <td class="cell-muted">08-26 19:52</td>
+                    <td class="cell-muted">08-28 09:40</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8895</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572004102</td>
+                    <td><span class="pill pill-blue">自动</span></td>
+                    <td class="cell-muted">08-26 15:03</td>
+                    <td class="cell-muted">08-26 20:18</td>
+                    <td><span class="pill pill-green">交易成功</span></td>
+                    <td class="cell-muted">无</td>
+                    <td>2号店 罗伯特</td>
+                    <td>140000122179240</td>
+                    <td>阿泽</td>
+                    <td class="cell-muted">P-100187</td>
+                    <td>透气速干运动套装</td>
+                    <td class="money">¥199.00</td>
+                    <td class="money">1</td>
+                    <td class="money">¥199.00</td>
+                    <td class="money muted">5%</td>
+                    <td class="money">¥9.95</td>
+                    <td><span class="pill pill-green">是</span></td>
+                    <td class="money">¥4.98</td>
+                    <td class="money">¥4.97</td>
+                    <td><span class="pill pill-blue">已提现</span></td>
+                    <td class="cell-muted">08-26 15:03</td>
+                    <td class="cell-muted">08-28 11:22</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+
+                  <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="cell-muted">8894</td>
+                    <td><span class="pill pill-gray">快手</span></td>
+                    <td class="order-id">3719029950572003988</td>
+                    <td><span class="pill pill-gray">手动</span></td>
+                    <td class="cell-muted">08-26 09:18</td>
+                    <td class="cell-muted">—</td>
+                    <td><span class="pill pill-gray">待付款</span></td>
+                    <td class="cell-muted">无</td>
+                    <td>菠萝荔枝</td>
+                    <td>140000122179241</td>
+                    <td>小北</td>
+                    <td class="cell-muted">P-100176</td>
+                    <td>柔软针织开衫</td>
+                    <td class="money">¥109.00</td>
+                    <td class="money">1</td>
+                    <td class="money">¥109.00</td>
+                    <td class="money muted">5%</td>
+                    <td class="money muted">¥0.00</td>
+                    <td><span class="pill pill-gray">否</span></td>
+                    <td class="money muted">¥0.00</td>
+                    <td class="money muted">¥0.00</td>
+                    <td><span class="pill pill-gray">—</span></td>
+                    <td class="cell-muted">08-26 09:18</td>
+                    <td class="cell-muted">08-26 09:18</td>
+                    <td><a class="icon-btn" href="#" title="查看"><i class="feather icon-eye"></i></a><a class="icon-btn" href="#" title="编辑"><i class="feather icon-edit-2"></i></a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <div class="info">显示 1–8 条，共 1,705 条</div>
+              <div class="pager">
+                <span>上一页</span>
+                <span class="active">1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>…</span>
+                <span>214</span>
+                <span>下一页</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--text-muted);">
+          注：状态 pill 的语义色需要一行显示层映射（不改变任何操作）；纯 CSS 皮肤下 dcat 的 label 仍是同一种颜色。
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sample-ribbon">
+  <span>UI 样张</span>
+  <a href="?">墨蓝 v2</a>
+  <a href="?theme=mono">黑白非线性</a>
+  <a href="index.html">索引</a>
+</div>
+
+</body>
+</html>

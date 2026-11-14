@@ -2,6 +2,10 @@
         class="dcat-admin-body sidebar-mini layout-fixed {{ $configData['body_class']}} {{ $configData['sidebar_class'] }}
         {{ $configData['navbar_class'] === 'fixed-top' ? 'navbar-fixed-top' : '' }} " >
 
+@if(config('app.ui_skin') === 'mono')
+<script>document.documentElement.classList.add('mono');</script>
+@endif
+
 <script>
     var Dcat = CreateDcat({!! Dcat\Admin\Admin::jsVariables() !!});
 </script>

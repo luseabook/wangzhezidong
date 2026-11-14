@@ -67,6 +67,16 @@ config([
 ]);
 
 /**
+ * UI 皮肤（可选）：默认 classic，设置 UI_SKIN=mono 后启用黑白非线性皮肤。
+ */
+if (config('app.ui_skin') === 'mono') {
+    Admin::css('/vendor/theme/tokens.css');
+    Admin::css('/vendor/theme/master.css');
+    Admin::css('/vendor/theme/mono.css');
+    Admin::script("document.documentElement.classList.add('mono');");
+}
+
+/**
  * 处理登录页背景图
  */
 if (empty(admin_setting('master_site_login'))) {
