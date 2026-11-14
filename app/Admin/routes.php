@@ -51,6 +51,9 @@ Route::group([
     $router->get("order/import2", 'OrderImportController@create2');
     // 订单导入记录
     $router->resource("order/log", 'OrderLogController');
+
+    // 订单变更记录（只读，用于追溯"何时、什么字段、从什么变成什么"）
+    $router->resource("order/history", 'OrderHistoryController')->only(['index']);
     // 订单导出
     $router->get("export/order_import", 'OrderImportController@export');
 

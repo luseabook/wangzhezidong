@@ -6,6 +6,7 @@ use App\Admin\Actions\Grid\ImportOrder;
 use App\Admin\Exports\OrderExport;
 use App\Models\Master;
 use App\Models\Order;
+use App\Models\OrderHistory;
 use App\Traits\CashTrait;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -210,7 +211,17 @@ class OrderController extends AdminController
      */
     protected function detail($id)
     {
-        return Show::make($id, new Order(), function (Show $show) {
+        // 变更历史：按订单ID取最近 100 条（只读，用于"有据可依"）
+        $histories = OrderHistory::query()
+            ->where('order_id', $id)
+            ->orderByDesc('changed_at')
+            ->orderByDesc('id')
+            ->limit(100)
+            ->get();
+
+        $historyHtml = $this->renderHistory($histories, $id);
+
+        return Show::make($id, new Order(), function (Show $show) use ($historyHtml) {
             $show->field('id');
             $show->field('sellerType');
             $show->field('oid');
@@ -256,12 +267,65 @@ class OrderController extends AdminController
             $show->field('commission2');
             $show->field('commission2_rate');
             $show->field('created_at');
-            $show->field('created_at');
             $show->field('updated_at');
+
+            $show->html($historyHtml);
 
             $show->disableDeleteButton();
             $show->disableEditButton();
         });
+    }
+
+    /**
+     * 渲染订单变更历史区块
+     */
+    private function renderHistory($histories, $orderId): string
+    {
+        $count = $histories->count();
+        $rows = '';
+
+        foreach ($histories as $h) {
+            $field = e($h->fieldLabel());
+            $old = $h->old_value === null || $h->old_value === '' ? '<span style="color:#bbb">空</span>' : e($h->old_value);
+            $new = $h->new_value === null || $h->new_value === '' ? '<span style="color:#bbb">空</span>' : e($h->new_value);
+            $source = e($h->sourceLabel());
+            $color = [0 => '#1c7ed6', 1 => '#2f9e44', 2 => '#868e96'][$h->source] ?? '#868e96';
+            $time = optional($h->changed_at)->format('Y-m-d H:i:s') ?? '';
+            $op = $h->operator ? e($h->operator) : '<span style="color:#bbb">—</span>';
+            $batch = $h->order_log_id ? ('#' . $h->order_log_id) : '—';
+
+            $rows .= "<tr>
+                <td style='white-space:nowrap;color:#666'>{$time}</td>
+                <td>{$field}</td>
+                <td style='color:#c92a2a'>{$old}</td>
+                <td style='color:#2b8a3e'>{$new}</td>
+                <td><span style='color:#fff;background:{$color};padding:1px 6px;border-radius:8px;font-size:12px'>{$source}</span></td>
+                <td>{$op}</td>
+                <td style='color:#999'>{$batch}</td>
+            </tr>";
+        }
+
+        if ($count === 0) {
+            return '<div class="card" style="margin-top:15px">
+                <div class="card-header"><h4 style="margin:0">变更记录</h4></div>
+                <div class="card-body" style="color:#999">暂无变更记录</div>
+            </div>';
+        }
+
+        $more = $count >= 100 ? "<div style='padding:8px 0;color:#999'>仅显示最近 100 条，<a href='/admin/order/history?order_id={$orderId}'>查看全部</a></div>" : '';
+
+        return '<div class="card" style="margin-top:15px">
+            <div class="card-header"><h4 style="margin:0">变更记录 <span style="color:#999;font-size:13px">共 ' . $count . ' 条</span></h4></div>
+            <div class="card-body" style="padding:0">
+                <table class="table" style="margin:0">
+                    <thead><tr style="background:#fafafa">
+                        <th>时间</th><th>字段</th><th>原值</th><th>新值</th><th>来源</th><th>操作人</th><th>批次</th>
+                    </tr></thead>
+                    <tbody>' . $rows . '</tbody>
+                </table>
+                ' . $more . '
+            </div>
+        </div>';
     }
 
     /**

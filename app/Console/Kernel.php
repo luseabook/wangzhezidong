@@ -29,8 +29,9 @@ class Kernel extends ConsoleKernel
 
         # 每小时执行一次
         # 视频号小店订单更新
-        // php artisan app:spider-wechat-order
-        $schedule->command('app:spider-wechat-order')->hourly();
+        # 已停用：视频号已确认无人使用，快手订单改由本地客户端同步
+        # 如需恢复，取消下面一行的注释即可
+        // $schedule->command('app:spider-wechat-order')->hourly();
 
         # 每小时执行一次
         # 更新达人表中已结算、已提现、可提现佣金字段
