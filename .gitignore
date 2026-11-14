@@ -13,6 +13,8 @@
 .env.backup
 .env.production
 *.log
+*.pfx
+*.pvk
 .DS_Store
 Thumbs.db
 license-center/data/

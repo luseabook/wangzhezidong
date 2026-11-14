@@ -44,7 +44,13 @@
         }
       ],
       "icon": "build/icon.ico",
-      "artifactName": "KsSync-Setup-${version}.${ext}"
+      "artifactName": "KsSync-Setup-${version}.${ext}",
+      "signtoolOptions": {
+        "publisherName": "Wangzhe Test",
+        "signingHashAlgorithms": [
+          "sha256"
+        ]
+      }
     },
     "nsis": {
       "oneClick": false,

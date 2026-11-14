@@ -102,7 +102,43 @@ systemctl restart ks-license
 - 面板底部可关闭/开启“开机自启”
 - 开发模式只保存配置，不写 Windows 登录项
 
-## 6. 发布验证清单
+## 6. 测试阶段：自签名证书
+
+当前项目和少量测试用户可以先使用自签名证书，不采购正式证书。
+
+- 公钥证书：`client/build/wangzhe-test-codesign.cer`
+- 私钥 PFX：`E:\wangzhe\wangzhe_project_b\certs\wangzhe-test-codesign.pfx`
+- PFX 密码：`E:\wangzhe\certs\password.txt`
+- 证书主题：`CN=Wangzhe Test`
+- `publisherName`：`Wangzhe Test`
+
+私钥 PFX 和密码文件不要提交、不要发到群里；公钥 `.cer` 可以随安装包发给测试用户。
+
+构建：
+
+```powershell
+cd client
+$env:CSC_LINK = "E:\wangzhe\wangzhe_project_b\certs\wangzhe-test-codesign.pfx"
+$env:CSC_KEY_PASSWORD = (Get-Content "E:\wangzhe\certs\password.txt" -Raw).Trim()
+npm run dist
+```
+
+测试用户第一次安装前，先运行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build\install-test-cert.ps1
+```
+
+或双击 `build\wangzhe-test-codesign.cer`，安装到：
+
+- 受信任的根证书颁发机构
+- 受信任的发布者
+
+安装证书后再打开安装包。未安装证书时，Windows 仍会提示未知发布者，`Get-AuthenticodeSignature` 也会返回 `UnknownError`；这是自签名证书的正常状态。
+
+自签名证书只适合少量测试用户和内部升级验证。正式对外交付、尤其是开启静默自动更新时，仍建议换成 OV/EV 证书。
+
+## 7. 发布验证清单
 
 1. 安装旧版本 `1.0.0`
 2. 上传新版本 `1.0.1`、`latest.yml`、`blockmap`
@@ -115,7 +151,7 @@ systemctl restart ks-license
 
 > `electron-updater` 默认不降级。回滚时保留旧安装包并手工重装，或者发布一个版本号更高的回滚版本。
 
-## 7. 客户端健康巡检
+## 8. 客户端健康巡检
 
 授权中心：
 
