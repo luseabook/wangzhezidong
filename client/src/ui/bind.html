@@ -1,31 +1,25 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>绑定店铺</title>
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-       font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#f5f6f8;color:#222;font-size:13px;
-       -webkit-user-select:none;user-select:none;overflow:hidden}
-  h2{font-size:16px;margin:0 0 4px;font-weight:600}
-  .sub{color:#999;font-size:12px;margin-bottom:16px}
-  #qrBox{width:230px;height:230px;background:#fff;border-radius:10px;display:flex;align-items:center;
-         justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.07);position:relative;cursor:pointer}
-  #qrBox:hover{box-shadow:0 2px 14px rgba(255,106,0,.25)}
-  #qrBox::after{content:"点一下可刷新";position:absolute;bottom:6px;left:0;right:0;text-align:center;
-                font-size:11px;color:#c9c9c9;opacity:0;transition:opacity .2s;pointer-events:none}
-  #qrBox:hover::after{opacity:1}
-  #q{width:220px;height:220px;display:block;image-rendering:pixelated;opacity:0;transition:opacity .2s}
-  #ph{position:absolute;color:#bbb;font-size:12px}
-  .tip{margin-top:16px;text-align:center;line-height:1.8;color:#333;font-size:13px}
-  .tip b{color:#ff6a00}
-  #st{margin-top:12px;font-size:12px;color:#aaa;min-height:16px}
-  .ok .tip b{color:#22a06b}
-</style></head><body>
-  <h2>绑定店铺</h2>
-  <div class="sub">扫一次，加一个店；可以连续扫</div>
-  <div id="qrBox"><img id="q" alt=""><span id="ph">正在获取二维码…</span></div>
-  <div class="tip" id="tip">打开 <b>快手小店商家版 APP</b><br>左上角「扫一扫」扫描上方二维码</div>
-  <div id="st">请稍候…</div>
+<link rel="stylesheet" href="theme.css">
+</head><body class="bind-page">
+  <section class="bind-card">
+    <div class="brand">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M6 3.5h9.5L19 7v13.5H6z"/><path d="M9 9h7M9 12.5h7M9 16h4.5"/></svg></span>
+      <div class="brand-copy"><b>绑定店铺</b><span>SCAN TO BIND</span></div>
+    </div>
+
+    <div id="qrBox" class="qr-shell">
+      <img id="q" alt="店铺绑定二维码">
+      <span id="ph" class="qr-placeholder">正在获取二维码…</span>
+      <span class="qr-refresh">点击刷新</span>
+    </div>
+
+    <div class="tip" id="tip">打开 <b>快手小店商家版 APP</b><br>左上角「扫一扫」扫描上方二维码</div>
+    <div class="bind-status" id="st">请稍候…</div>
+    <div class="bind-foot">可连续扫码添加多个店铺 · 每个店铺独立登录态</div>
+  </section>
 
 <script>
 const { ipcRenderer } = require('electron');
@@ -41,18 +35,17 @@ ipcRenderer.on('bind:qr', (_e, dataUrl) => {
   st.textContent = '等待扫码…（二维码会自动刷新）';
 });
 
-// 客户点二维码 = 强制刷新（页面的「刷新」是截图里的像素，点不到，这里走 IPC 让页面真的刷新）
 document.getElementById('qrBox').addEventListener('click', () => {
   ipcRenderer.send('bind:refresh');
   st.textContent = '正在刷新二维码…';
 });
+
 ipcRenderer.on('bind:status', (_e, text) => { st.textContent = text; });
 ipcRenderer.on('bind:done', (_e, shop) => {
   document.body.classList.add('ok');
-  tip.innerHTML = '<b>✓ 已添加</b> ' + (shop.nick || shop.id);
+  tip.innerHTML = '<b>已添加</b> ' + (shop.nick || shop.id);
 });
 ipcRenderer.on('bind:next', (_e, n) => {
-  // 连续扫码：复位到等待下一个
   document.body.classList.remove('ok');
   tip.innerHTML = '打开 <b>快手小店商家版 APP</b><br>左上角「扫一扫」扫描上方二维码';
   q.style.opacity = '0';

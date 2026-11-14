@@ -24,6 +24,14 @@ const DEFAULT = {
   license: '',
   license_server: '',       // 授权中心地址，安装包预置
   machine_id: '',           // 首次运行时生成
+  autostart: true,          // 开机自启（安装后默认开启）
+  update: {
+    feed_url: '',            // 由授权中心激活时下发，或手动配置
+    channel: 'latest',
+    check_interval_hours: 4,
+    auto_download: true,
+    allow_prerelease: false,
+  },
   upload: { base_url: '', token: '', poll_timeout_s: 180 },
   sync: {
     interval_minutes: 60,

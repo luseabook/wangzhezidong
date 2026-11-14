@@ -4,11 +4,12 @@ import { app, BrowserWindow, Tray, Menu, session, nativeImage, ipcMain, shell } 
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { setRoot, loadConfig, dataRoot, writeLog } from './core/config.js';
+import { setRoot, loadConfig, saveConfig, dataRoot, writeLog } from './core/config.js';
 import { dotPng, COLORS } from './core/icon.js';
 import * as shops from './core/shops.js';
 import { runShop } from './core/engine.js';
 import { NEEDS } from './core/messages.js';
+import { initUpdater, updaterStatus, checkForUpdates, downloadUpdate, installUpdate, appVersion } from './core/updater.js';
 import {
   activate, bindShop, unbindShop, heartbeat,
   localLicenseOk, graceInfo, reasonText, machineId,
@@ -36,7 +37,10 @@ if (!app.requestSingleInstanceLock()) {
     createShopsWindow();
     createTray();
     registerIpc();
+    applyAutoStart();
+    initUpdater({ getConfig: () => cfg, log });
 
+    const hidden = process.argv.includes('--hidden');
     // 首次使用：先激活，再扫码
     if (!localLicenseOk(cfg).ok) {
       ensureActivateWindow();
@@ -46,6 +50,8 @@ if (!app.requestSingleInstanceLock()) {
       setTimeout(() => startBind(), 1500);
     } else if (process.argv.includes('--bind')) {
       setTimeout(() => startBind(), 1200);
+    } else if (!hidden) {
+      setTimeout(() => showShops(), 800);
     }
 
     setTimeout(() => runAll('startup'), 8000);
@@ -64,6 +70,20 @@ if (!app.requestSingleInstanceLock()) {
   function showShops() {
     if (!winShops || winShops.isDestroyed()) createShopsWindow();
     winShops.show(); winShops.focus();
+  }
+
+  function applyAutoStart() {
+    // 开发模式/自动化测试不改系统登录项，避免把 electron.exe 注册进开机启动
+    if (!app.isPackaged || process.env.KS_DISABLE_AUTOSTART === '1') return;
+    try {
+      app.setLoginItemSettings({
+        openAtLogin: cfg.autostart !== false,
+        path: process.execPath,
+        args: ['--hidden'],
+      });
+    } catch (e) {
+      log('设置开机自启失败', e?.message || String(e));
+    }
   }
 
   // ---------- 激活 ----------
@@ -133,6 +153,7 @@ if (!app.requestSingleInstanceLock()) {
           migrated.push({ id: s.id, ok: !!res?.ok, reason: res?.reason });
         }
         cfg = loadConfig();
+        setTimeout(() => checkForUpdates(), 3000);
         winActivate?.webContents.send('license:ok', { license: cfg.license, migrated });
         setTimeout(() => {
           try { winActivate?.close(); } catch { /* ignore */ }
@@ -163,9 +184,23 @@ if (!app.requestSingleInstanceLock()) {
     ipcMain.handle('shops:add', () => startBind());
     ipcMain.handle('app:openData', () => shell.openPath(dataRoot()));
     ipcMain.handle('app:info', () => ({
-      version: app.getVersion(), dataRoot: dataRoot(),
+      version: appVersion(), dataRoot: dataRoot(),
       configPath: path.join(dataRoot(), 'config.json'),
     }));
+    ipcMain.handle('app:autoStart:get', () => ({
+      enabled: app.isPackaged ? !!app.getLoginItemSettings().openAtLogin : cfg.autostart !== false,
+      packaged: app.isPackaged,
+    }));
+    ipcMain.handle('app:autoStart:set', (_e, enabled) => {
+      cfg.autostart = !!enabled;
+      saveConfig(cfg);
+      applyAutoStart();
+      return { enabled: app.isPackaged ? !!app.getLoginItemSettings().openAtLogin : cfg.autostart, packaged: app.isPackaged };
+    });
+    ipcMain.handle('update:status', () => updaterStatus());
+    ipcMain.handle('update:check', () => checkForUpdates());
+    ipcMain.handle('update:download', () => downloadUpdate());
+    ipcMain.handle('update:install', () => installUpdate());
   }
 
   // ---------- 调度 ----------

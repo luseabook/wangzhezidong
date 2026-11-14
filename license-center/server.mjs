@@ -15,7 +15,11 @@ import { openDb, makeApi } from './db.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 8899);
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ks-admin-2026';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
+if (!ADMIN_PASSWORD) {
+  console.error('ADMIN_PASSWORD 未配置，授权中心拒绝启动');
+  process.exit(1);
+}
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'license.db');
 const SECRET = process.env.SECRET || ADMIN_PASSWORD;
 // 反向代理前缀（例如挂在 https://host/lic/ 后面时设为 /lic）
@@ -147,6 +151,8 @@ async function handleActivate(req, res) {
     slots: c.slots,
     used: api.used(c.id),
     expires_at: c.expires_at,
+    update_feed: process.env.CLIENT_UPDATE_URL || '',
+    update_channel: process.env.CLIENT_UPDATE_CHANNEL || 'latest',
   });
 }
 

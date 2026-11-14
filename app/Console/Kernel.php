@@ -38,6 +38,9 @@ class Kernel extends ConsoleKernel
         // php artisan create:update-master-commission
         $schedule->command('create:update-master-commission')->hourly();
 
+        # 客户端自动导入/队列健康巡检；配置 CLIENT_HEALTH_WEBHOOK 后推送告警
+        $schedule->command('client:health-check')->everyTenMinutes()->withoutOverlapping();
+
     }
 
     /**

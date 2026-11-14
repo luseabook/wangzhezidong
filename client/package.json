@@ -19,6 +19,12 @@
     "appId": "com.wangzhe.kssync",
     "productName": "快手订单自动同步",
     "asar": false,
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://updates.example.com/ks-sync"
+      }
+    ],
     "directories": {
       "output": "dist",
       "buildResources": "build"
@@ -26,8 +32,7 @@
     "files": [
       "src/**/*",
       "package.json",
-      "!src/tools/**",
-      "!**/node_modules/**"
+      "!src/tools/**"
     ],
     "win": {
       "target": [
@@ -55,5 +60,8 @@
       ],
       "language": "2052"
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }

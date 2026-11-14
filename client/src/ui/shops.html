@@ -1,138 +1,283 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>快手订单自动同步</title>
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#f5f6f8;color:#222;font-size:13px}
-  .top{background:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #e8e8e8}
-  .top h1{font-size:16px;margin:0;font-weight:600}
-  .top .sum{margin-left:auto;color:#888;font-size:12px}
-  .btn{border:0;background:#ff6a00;color:#fff;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px}
-  .btn:hover{opacity:.9}
-  .btn.ghost{background:#fff;color:#555;border:1px solid #ddd}
-  .list{background:#fff;margin:12px;border-radius:8px;overflow:hidden}
-  .row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #f2f2f2}
-  .row:last-child{border-bottom:0}
-  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:#999}
-  .dot.ok{background:#22a06b}.dot.warn{background:#f0ad4e}
-  .dot.error{background:#d9534f}.dot.idle{background:#ccc}
-  .nick{font-weight:600;min-width:140px}
-  .meta{color:#999;font-size:12px}
-  .act{margin-left:auto;display:flex;gap:6px}
-  .mini{border:1px solid #e0e0e0;background:#fff;color:#555;border-radius:5px;padding:4px 10px;cursor:pointer;font-size:12px}
-  .mini:hover{border-color:#ff6a00;color:#ff6a00}
-  .empty{padding:56px 20px;text-align:center;color:#aaa}
-  .empty b{display:block;color:#555;font-size:15px;margin-bottom:8px;font-weight:600}
-  .foot{padding:10px 12px;display:flex;gap:8px;align-items:center;color:#aaa;font-size:12px}
-  .foot .spacer{margin-left:auto}
-  .badge{display:inline-block;padding:1px 6px;border-radius:8px;background:#fff3e8;color:#ff6a00;font-size:11px}
-</style></head><body>
-<div class="top">
-  <h1>快手订单自动同步</h1>
-  <span class="sum" id="sum">—</span>
-  <button class="btn" onclick="addShop()">+ 添加店铺</button>
-</div>
-<div id="banner" style="display:none;padding:9px 20px;font-size:12px"></div>
-<div class="list" id="list"><div class="empty"><b>还没有添加店铺</b>点右上角「添加店铺」，用快手小店商家版 APP 扫码即可</div></div>
-<div class="foot">
-  <button class="mini" onclick="syncAll()">立即同步全部</button>
-  <button class="mini" onclick="openData()">打开数据目录</button>
-  <span class="spacer" id="interval"></span>
+<link rel="stylesheet" href="theme.css">
+</head><body class="panel-page">
+<div class="panel-shell">
+  <header class="panel-top">
+    <div class="brand">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M6 3.5h9.5L19 7v13.5H6z"/><path d="M9 9h7M9 12.5h7M9 16h4.5"/></svg></span>
+      <div class="brand-copy"><b>快手订单同步</b><span>ORDER SYNC / CLIENT</span></div>
+    </div>
+    <div class="top-right">
+      <span class="version-chip" id="versionChip">v—</span>
+      <span class="license-chip" id="licenseChip"><span class="shape square"></span><span id="licenseText">授权 —</span></span>
+      <button class="btn ghost sm" onclick="addShop()">+ 添加店铺</button>
+    </div>
+  </header>
+
+  <div class="banner is-hidden" id="banner"></div>
+  <div class="update-strip is-hidden" id="updateStrip">
+    <span id="updateText"></span>
+    <span class="spacer"></span>
+    <button class="btn ghost sm is-hidden" id="updateAction" onclick="updateAction()">下载</button>
+  </div>
+
+  <section class="stats" aria-label="同步概览">
+    <div class="stat">
+      <div class="stat-k">SHOPS / 店铺</div>
+      <div class="stat-v" id="statShops">—</div>
+      <div class="stat-sub" id="statShopsSub">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-k">TODAY / 今日单量</div>
+      <div class="stat-v" id="statToday">—</div>
+      <div class="stat-sub">已完成同步的订单</div>
+    </div>
+    <div class="stat">
+      <div class="stat-k">LAST RUN / 上次同步</div>
+      <div class="stat-v" id="statLast">—</div>
+      <div class="stat-sub" id="statLastSub">尚未同步</div>
+    </div>
+    <div class="stat">
+      <div class="stat-k">LICENSE / 授权位</div>
+      <div class="stat-v" id="statLicense">—</div>
+      <div class="stat-sub" id="statLicenseSub">—</div>
+    </div>
+  </section>
+
+  <section class="board">
+    <div class="board-head">
+      <div class="board-title">店铺同步 <span class="label" id="storesLabel">STORES</span></div>
+      <button class="btn primary sm" id="syncAllBtn" onclick="syncAll()">立即同步全部</button>
+    </div>
+    <div class="shop-head">
+      <span>状态</span><span>店铺</span><span>今日</span><span>上次同步</span><span style="text-align:right">操作</span>
+    </div>
+    <div class="shop-list" id="shopList">
+      <div class="empty"><div class="big">—</div><b>还没有添加店铺</b><p>点右上角「添加店铺」，用快手小店商家版 APP 扫码</p></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <button class="btn ghost sm" onclick="openData()">打开数据目录</button>
+    <button class="btn ghost sm" id="updateBtn" onclick="checkUpdate()">检查更新</button>
+    <label class="autostart"><input type="checkbox" id="autoStart" disabled>开机自启</label>
+    <span class="foot-meta" id="interval"></span>
+    <span class="spacer"></span>
+    <span class="foot-note" id="footNote">LOCAL DATA / 每 60 分钟</span>
+  </footer>
 </div>
 
 <script>
 const { ipcRenderer } = require('electron');
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pad2 = (n) => String(n).padStart(2, '0');
+
 let NEEDS = {};
 
-function statusClass(s){
-  if (s === 'ok') return 'ok';
-  if (s === 'warn' || s === 'running') return 'warn';
-  if (s === 'need_login' || s === 'error') return 'error';
-  return 'idle';
-}
-function ago(iso){
+function ago(iso) {
   if (!iso) return '尚未同步';
-  const d = new Date(iso); const min = Math.floor((Date.now() - d) / 60000);
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '尚未同步';
+  const min = Math.floor((Date.now() - d.getTime()) / 60000);
   if (min < 1) return '刚刚';
-  if (min < 60) return min + ' 分钟前';
+  if (min < 60) return `${min} 分钟前`;
   const h = Math.floor(min / 60);
-  if (h < 24) return h + ' 小时前';
-  return Math.floor(h / 24) + ' 天前';
+  if (h < 24) return `${h} 小时前`;
+  return `${Math.floor(h / 24)} 天前`;
 }
-function needText(s){
-  if (s === 'need_login') return '需要重新扫码';
-  if (s === 'error') return '暂时中断';
-  if (s === 'warn') return '有异常，正在重试';
-  if (s === 'disabled') return '已停用';
-  return '';
-}
-
-async function render(){
-  const { shops, lastRun, needs, interval, license } = await ipcRenderer.invoke('shops:list');
-  NEEDS = needs || {};
-  const active = shops.filter(s => s.enabled);
-  const todaySum = active.reduce((a, s) => a + ((s.stats && s.stats.today) || 0), 0);
-  document.getElementById('sum').textContent =
-    `${active.length} 个店铺在同步 · 今日 ${todaySum} 单` + (lastRun ? ` · 上次 ${ago(lastRun)}` : '');
-  document.getElementById('interval').textContent = `每 ${interval} 分钟自动同步`;
-
-  // 授权配额与到期提示
-  const banner = document.getElementById('banner');
-  if (license) {
-    const parts = [`已用 ${license.used}/${license.slots} 店铺位`];
-    if (license.expires_at) parts.push(`到期 ${license.expires_at}`);
-    banner.style.display = '';
-    banner.style.background = '#f1f8ff';
-    banner.style.color = '#1c7ed6';
-    banner.textContent = parts.join(' · ');
-    if (license.grace && license.grace.expired) {
-      banner.style.background = '#ffe3e3'; banner.style.color = '#c92a2a';
-      banner.textContent = '授权已过期，自动上传已暂停，请联系续费';
-    } else if (license.grace && !license.grace.expired) {
-      banner.style.background = '#fff9db'; banner.style.color = '#e67700';
-      banner.textContent = `授权将在 ${license.grace.days} 天后到期，请及时续费 · ` + parts.join(' · ');
-    }
-  } else {
-    banner.style.display = 'none';
+function statusOf(s) {
+  if (s.busy) return { key: 'running', shape: 'square', label: '同步中' };
+  switch (s.last_status) {
+    case 'ok': return { key: 'ok', shape: 'dot', label: '正常' };
+    case 'warn': return { key: 'warn', shape: 'triangle', label: '有异常' };
+    case 'need_login': return { key: 'need', shape: 'cross', label: '需扫码' };
+    case 'error': return { key: 'need', shape: 'cross', label: '已中断' };
+    case 'disabled': return { key: 'off', shape: 'square', label: '已停用' };
+    default: return { key: 'idle', shape: 'square', label: '待同步' };
   }
+}
+function licenseState(license) {
+  if (!license) return { cls: 'warn', text: '未激活', sub: '需要激活码' };
+  const name = license.name || '已授权';
+  if (license.grace?.expired) return { cls: 'warn', text: `${license.used}/${license.slots} · 已过期`, sub: name };
+  if (license.grace) return { cls: 'warn', text: `${license.used}/${license.slots} · ${license.grace.days} 天到期`, sub: name };
+  return { cls: 'ok', text: `${license.used}/${license.slots} 店铺位`, sub: name };
+}
+function renderBanner(license) {
+  const banner = $('banner');
+  if (!license?.grace) { banner.classList.add('is-hidden'); banner.textContent = ''; return; }
+  banner.classList.remove('is-hidden');
+  if (license.grace.expired) banner.textContent = '授权已过期，自动上传已暂停；订单仍会采集到本地，续费后补传。';
+  else banner.textContent = `授权将在 ${license.grace.days} 天后到期，请及时续费。`;
+}
 
-  const list = document.getElementById('list');
-  if (!shops.length){
-    list.innerHTML = '<div class="empty"><b>还没有添加店铺</b>点右上角「添加店铺」，用快手小店商家版 APP 扫码即可</div>';
+let updateState = {};
+let appVersion = '';
+function renderUpdate(s) {
+  updateState = s || {};
+  const strip = $('updateStrip');
+  const text = $('updateText');
+  const action = $('updateAction');
+  if (!strip) return;
+  strip.classList.remove('warn');
+  action.classList.add('is-hidden');
+
+  switch (updateState.status) {
+    case 'available':
+      strip.classList.remove('is-hidden');
+      text.textContent = `发现新版本 v${updateState.availableVersion || ''}，可下载更新。`;
+      action.textContent = '下载';
+      action.classList.remove('is-hidden');
+      break;
+    case 'downloading':
+      strip.classList.remove('is-hidden');
+      text.textContent = `正在下载 v${updateState.availableVersion || ''} · ${updateState.progress || 0}%`;
+      break;
+    case 'downloaded':
+      strip.classList.remove('is-hidden');
+      text.textContent = `新版本 v${updateState.availableVersion || ''} 已下载，重启后安装。`;
+      action.textContent = '重启安装';
+      action.classList.remove('is-hidden');
+      break;
+    case 'error':
+      strip.classList.remove('is-hidden');
+      strip.classList.add('warn');
+      text.textContent = `更新失败：${updateState.error || '请稍后重试'}`;
+      action.textContent = '重试';
+      action.classList.remove('is-hidden');
+      break;
+    case 'checking':
+      strip.classList.remove('is-hidden');
+      text.textContent = '正在检查更新…';
+      break;
+    case 'up_to_date':
+      strip.classList.remove('is-hidden');
+      text.textContent = '当前已是最新版本。';
+      setTimeout(() => { if (updateState.status === 'up_to_date') strip.classList.add('is-hidden'); }, 2600);
+      break;
+    case 'not_configured':
+    case 'dev_mode':
+    case 'idle':
+    default:
+      strip.classList.add('is-hidden');
+      break;
+  }
+}
+
+async function loadAppMeta() {
+  try {
+    const info = await ipcRenderer.invoke('app:info');
+    appVersion = info.version || '';
+    $('versionChip').textContent = `v${appVersion || '—'}`;
+    $('versionChip').title = `当前版本 ${appVersion || '未知'}`;
+  } catch { /* ignore */ }
+  try {
+    const a = await ipcRenderer.invoke('app:autoStart:get');
+    $('autoStart').checked = !!a.enabled;
+    $('autoStart').disabled = false;
+    $('autoStart').title = a.packaged ? '登录 Windows 后自动启动到托盘' : '开发模式只保存配置，不注册系统启动项';
+  } catch { /* ignore */ }
+  try { renderUpdate(await ipcRenderer.invoke('update:status')); } catch { /* ignore */ }
+}
+
+async function checkUpdate() {
+  const btn = $('updateBtn');
+  btn.disabled = true;
+  try {
+    const s = await ipcRenderer.invoke('update:check');
+    renderUpdate(s);
+    if (s.status === 'not_configured') {
+      $('updateStrip').classList.remove('is-hidden');
+      $('updateText').textContent = '更新源未配置，请联系服务商。';
+    }
+  } finally { btn.disabled = false; }
+}
+
+async function updateAction() {
+  if (updateState.status === 'available') await ipcRenderer.invoke('update:download');
+  else if (updateState.status === 'downloaded') await ipcRenderer.invoke('update:install');
+  else if (updateState.status === 'error') await checkUpdate();
+}
+
+async function render() {
+  let data;
+  try { data = await ipcRenderer.invoke('shops:list'); } catch { return; }
+  const { shops = [], lastRun, interval = 60, license = null } = data || {};
+  NEEDS = data?.needs || {};
+  const active = shops.filter((s) => s.enabled);
+  const today = active.reduce((a, s) => a + Number(s.stats?.today || 0), 0);
+  const busy = shops.some((s) => s.busy);
+
+  $('statShops').innerHTML = `${pad2(active.length)} <small>ACTIVE</small>`;
+  $('statShopsSub').textContent = `${shops.length} 个店铺 · ${active.length} 个启用`;
+  $('statToday').innerHTML = `${today} <small>ORDERS</small>`;
+  $('statLast').textContent = lastRun ? ago(lastRun) : '—';
+  $('statLastSub').textContent = lastRun ? new Date(lastRun).toLocaleString('zh-CN', { hour12: false }) : '尚未同步';
+  $('storesLabel').textContent = `STORES / ${pad2(shops.length)}`;
+  $('interval').textContent = `AUTO SYNC / 每 ${interval} 分钟`;
+  $('footNote').textContent = busy ? 'SYNCING / 正在同步' : 'LOCAL DATA / 本机存储';
+
+  const lic = licenseState(license);
+  $('licenseChip').className = `license-chip ${lic.cls}`;
+  $('licenseChip').innerHTML = `<span class="shape ${lic.cls === 'warn' ? 'triangle' : 'dot'}"></span><span id="licenseText">${esc(lic.text)}</span>`;
+  $('statLicense').textContent = license ? `${license.used} / ${license.slots}` : '—';
+  $('statLicenseSub').textContent = lic.sub;
+  renderBanner(license);
+
+  const syncBtn = $('syncAllBtn');
+  syncBtn.disabled = busy || active.length === 0;
+  syncBtn.textContent = busy ? '同步中…' : '立即同步全部';
+
+  if (!shops.length) {
+    $('shopList').innerHTML = '<div class="empty"><div class="big">—</div><b>还没有添加店铺</b><p>点右上角「添加店铺」，用快手小店商家版 APP 扫码</p></div>';
     return;
   }
-  list.innerHTML = shops.map(s => {
-    const cls = statusClass(s.busy ? 'running' : s.last_status);
-    const need = s.busy ? '同步中…' : needText(s.last_status);
-    const today = (s.stats && s.stats.today) || 0;
-    return `<div class="row">
-      <span class="dot ${cls}"></span>
-      <span class="nick">${esc(s.nick)}</span>
-      <span class="meta">${need ? `<span class="badge">${need}</span>` : ''} ${ago(s.last_sync_at)}${today ? ` · 今日 ${today} 单` : ''}</span>
-      <span class="act">
-        ${s.last_status === 'need_login' ? `<button class="mini" onclick="act('${s.id}','rescan')">重新扫码</button>` : ''}
-        <button class="mini" onclick="act('${s.id}','sync')">立即同步</button>
-        <button class="mini" onclick="act('${s.id}','${s.enabled ? 'disable' : 'enable'}')">${s.enabled ? '停用' : '启用'}</button>
-        <button class="mini" onclick="act('${s.id}','remove')">移除</button>
-      </span>
+
+  $('shopList').innerHTML = shops.map((s) => {
+    const st = statusOf(s);
+    const need = st.key === 'need';
+    return `<div class="shop-row">
+      <div class="shop-state ${st.key}"><span class="shape ${st.shape} ${st.key === 'ok' ? 'ok' : ''}"></span>${esc(st.label)}</div>
+      <div class="shop-name"><b>${esc(s.nick || s.id)}</b><span>ID ${esc(s.id)}${s.last_error ? ' · ' + esc(String(s.last_error).slice(0, 34)) : ''}</span></div>
+      <div class="shop-num">${Number(s.stats?.today || 0)}</div>
+      <div class="shop-time">${esc(ago(s.last_sync_at))}</div>
+      <div class="shop-actions">
+        ${need ? `<button class="btn ghost sm" onclick="act('${esc(s.id)}','rescan')">重新扫码</button>` : ''}
+        <button class="btn ghost sm" onclick="act('${esc(s.id)}','sync')">立即同步</button>
+        <button class="btn ghost sm" onclick="act('${esc(s.id)}','${s.enabled ? 'disable' : 'enable'}')">${s.enabled ? '停用' : '启用'}</button>
+        <button class="btn danger sm" onclick="act('${esc(s.id)}','remove')">移除</button>
+      </div>
     </div>`;
   }).join('');
 }
-function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-async function act(id, action){
-  if (action === 'remove' && !confirm('移除后该店铺不再同步（历史数据会保留），确定吗？')) return;
+async function act(id, action) {
+  if (action === 'remove' && !confirm('移除后该店铺不再同步，历史数据会保留，确定吗？')) return;
   await ipcRenderer.invoke('shops:action', { id, action });
   render();
 }
-async function addShop(){ await ipcRenderer.invoke('shops:add'); }
-async function syncAll(){ ipcRenderer.invoke('shops:syncAll'); }
-async function openData(){ ipcRenderer.invoke('app:openData'); }
+async function addShop() { await ipcRenderer.invoke('shops:add'); }
+async function syncAll() { ipcRenderer.invoke('shops:syncAll'); }
+async function openData() { ipcRenderer.invoke('app:openData'); }
 
 ipcRenderer.on('shop:changed', render);
 ipcRenderer.on('shops:changed', render);
 ipcRenderer.on('shop:progress', render);
+ipcRenderer.on('update:status', (_e, s) => renderUpdate(s));
+$('autoStart').addEventListener('change', async (e) => {
+  e.target.disabled = true;
+  try {
+    const r = await ipcRenderer.invoke('app:autoStart:set', e.target.checked);
+    e.target.checked = !!r.enabled;
+  } catch { /* ignore */ }
+  e.target.disabled = false;
+});
 setInterval(render, 3000);
 render();
+loadAppMeta();
 </script>
 </body></html>

@@ -107,6 +107,9 @@ export async function activate(code, version = '1.0.0') {
   c.upload = c.upload || {};
   c.upload.base_url = j.base_url || c.upload.base_url || '';
   c.upload.token = j.upload_token || c.upload.token || '';
+  c.update = c.update || {};
+  if (j.update_feed) c.update.feed_url = j.update_feed;
+  if (j.update_channel) c.update.channel = j.update_channel;
   saveConfig(c);
 
   return { license: c.license, base_url: c.upload.base_url };
