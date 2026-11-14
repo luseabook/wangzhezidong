@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>授权中心</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#f5f6f8;color:#222;font-size:13px}
+  .top{background:#fff;padding:14px 20px;display:flex;align-items:center;gap:16px;border-bottom:1px solid #e8e8e8}
+  .top h1{font-size:16px;margin:0;font-weight:600}
+  .stat{color:#666;font-size:12px}
+  .stat b{color:#ff6a00;font-size:15px;margin:0 2px}
+  .wrap{display:flex;gap:14px;padding:14px}
+  .col{background:#fff;border-radius:8px;overflow:hidden;flex:1;min-width:0}
+  .col h3{font-size:13px;margin:0;padding:11px 14px;border-bottom:1px solid #f0f0f0;color:#555;font-weight:600}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+  th{color:#999;font-weight:400;font-size:12px;background:#fafafa}
+  tr:hover td{background:#fcfcfc}
+  .btn{border:1px solid #e0e0e0;background:#fff;color:#555;border-radius:5px;padding:3px 9px;cursor:pointer;font-size:12px}
+  .btn:hover{border-color:#ff6a00;color:#ff6a00}
+  .btn.pri{background:#ff6a00;border-color:#ff6a00;color:#fff}
+  .tag{display:inline-block;padding:1px 7px;border-radius:9px;font-size:11px}
+  .t-high{background:#ffe3e3;color:#c92a2a}.t-warn{background:#fff3bf;color:#e67700}
+  .t-info{background:#e7f5ff;color:#1971c2}.t-ok{background:#e6fcf5;color:#087f5b}
+  .t-off{background:#f1f3f5;color:#868e96}
+  .muted{color:#aaa}
+  #detail{position:fixed;right:0;top:0;bottom:0;width:520px;background:#fff;box-shadow:-4px 0 16px rgba(0,0,0,.08);
+          transform:translateX(100%);transition:transform .18s;overflow:auto;z-index:9}
+  #detail.open{transform:none}
+  #detail h2{font-size:15px;margin:0;padding:14px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center}
+  #detail .body{padding:14px}
+  #detail .close{margin-left:auto;cursor:pointer;color:#999}
+  .kv{display:flex;gap:8px;padding:5px 0;border-bottom:1px dashed #f5f5f5}
+  .kv .k{color:#999;width:80px;flex:0 0 auto}
+  input,select{padding:6px 9px;border:1px solid #e0e0e0;border-radius:5px;font-size:12px;width:100%}
+  .row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+  .row label{width:80px;color:#999;flex:0 0 auto}
+  .sec{font-size:12px;color:#999;margin:16px 0 8px}
+</style></head><body>
+
+<div class="top">
+  <h1>授权中心</h1>
+  <span class="stat">客户 <b id="s-clients">-</b></span>
+  <span class="stat">授权位 <b id="s-slots">-</b></span>
+  <span class="stat">已占用 <b id="s-used">-</b></span>
+  <span class="stat">未处理告警 <b id="s-alerts">-</b></span>
+  <span class="stat" style="margin-left:auto">每日换店上限 <b id="s-limit">-</b> 次 · 冷却 <b id="s-cool">-</b> 分钟</span>
+  <button class="btn pri" onclick="newClient()">+ 新增客户</button>
+</div>
+
+<div class="wrap">
+  <div class="col" style="flex:1.3">
+    <h3>客户</h3>
+    <table><thead><tr>
+      <th>客户</th><th>激活码</th><th>店铺位</th><th>到期</th><th>状态</th><th>设备</th><th></th>
+    </tr></thead><tbody id="clients"></tbody></table>
+  </div>
+  <div class="col" style="flex:.9">
+    <h3>待处理告警</h3>
+    <table><thead><tr><th>时间</th><th>客户</th><th>级别</th><th>内容</th><th></th></tr></thead>
+    <tbody id="alerts"></tbody></table>
+  </div>
+</div>
+
+<div id="detail">
+  <h2><span id="d-title">客户详情</span><span class="close" onclick="closeDetail()">×</span></h2>
+  <div class="body" id="d-body"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let CURRENT = [];
+
+// 使用相对路径：服务端会注入 <base>，因此挂在反向代理前缀下也能正常工作
+async function apiGet(p) { const r = await fetch('admin/api/' + p); return r.json(); }
+async function apiPost(p, body) {
+  const r = await fetch('admin/api/' + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body || {}) });
+  return r.json();
+}
+
+function statusTag(c) {
+  if (c.status === 'suspended') return '<span class="tag t-off">已停用</span>';
+  const exp = c.expires_at ? new Date(c.expires_at + 'T23:59:59+08:00') : null;
+  if (exp && Date.now() > exp.getTime() + 7 * 864e5) return '<span class="tag t-high">已过期</span>';
+  if (exp && Date.now() > exp.getTime()) return '<span class="tag t-warn">宽限期</span>';
+  return '<span class="tag t-ok">正常</span>';
+}
+function overMark(c) {
+  return c.used > c.slots ? '<span class="tag t-high">超限 ' + c.used + '/' + c.slots + '</span>' : c.used + '/' + c.slots;
+}
+
+async function load() {
+  const d = await apiGet('overview');
+  if (!d.ok) { location.reload(); return; }
+  CURRENT = d.clients;
+  $('s-clients').textContent = d.stats.clients;
+  $('s-slots').textContent = d.stats.slots;
+  $('s-used').textContent = d.stats.used;
+  $('s-alerts').textContent = d.stats.open_alerts;
+  $('s-limit').textContent = d.switches.perDay;
+  $('s-cool').textContent = d.switches.cooldownMin;
+
+  $('clients').innerHTML = d.clients.map((c) => `<tr>
+    <td><a href="javascript:void(0)" onclick="openDetail(${c.id})" style="color:#1c7ed6;text-decoration:none">${esc(c.name)}</a></td>
+    <td style="font-family:monospace;color:#666">${esc(c.code)}</td>
+    <td>${overMark(c)}</td>
+    <td class="muted">${esc(c.expires_at || '—')}</td>
+    <td>${statusTag(c)} ${c.open_alerts ? '<span class="tag t-high">' + c.open_alerts + ' 告警</span>' : ''}</td>
+    <td class="muted">${c.devices}</td>
+    <td><button class="btn" onclick="openDetail(${c.id})">详情</button></td>
+  </tr>`).join('') || '<tr><td colspan="7" class="muted" style="padding:20px">还没有客户，点右上角新增</td></tr>';
+
+  $('alerts').innerHTML = d.alerts.map((a) => `<tr>
+    <td class="muted" style="white-space:nowrap">${esc((a.created_at || '').replace('T', ' ').slice(5, 16))}</td>
+    <td>${esc(a.client_name || '')}</td>
+    <td><span class="tag t-${a.severity === 'high' ? 'high' : a.severity === 'warn' ? 'warn' : 'info'}">${esc(a.severity)}</span></td>
+    <td style="color:#555">${esc(a.detail)}</td>
+    <td><button class="btn" onclick="ack(${a.id})">确认</button></td>
+  </tr>`).join('') || '<tr><td colspan="5" class="muted" style="padding:20px">没有待处理告警</td></tr>';
+}
+
+async function ack(id) { await apiPost('alert/ack', { id }); load(); }
+
+async function openDetail(id) {
+  const d = await apiGet('client?id=' + id);
+  if (!d.ok) return;
+  const c = d.client;
+  $('d-title').textContent = c.name;
+  $('d-body').innerHTML = `
+    <div class="row"><label>激活码</label><input value="${esc(c.code)}" readonly></div>
+    <div class="row"><label>店铺位</label><input id="f-slots" type="number" value="${c.slots}"></div>
+    <div class="row"><label>到期日</label><input id="f-exp" type="date" value="${esc(c.expires_at || '')}"></div>
+    <div class="row"><label>状态</label>
+      <select id="f-status">
+        <option value="active" ${c.status === 'active' ? 'selected' : ''}>正常</option>
+        <option value="suspended" ${c.status === 'suspended' ? 'selected' : ''}>停用</option>
+      </select></div>
+    <div class="row"><label>结算地址</label><input id="f-base" value="${esc(c.base_url)}"></div>
+    <div class="row"><label>上传令牌</label><input id="f-token" value="${esc(c.upload_token)}"></div>
+    <div class="row"><button class="btn pri" onclick="saveClient(${c.id})">保存</button>
+      <span class="muted">已用 ${c.used} / ${c.slots} · 今日换店 ${c.switches_today} 次</span></div>
+
+    <div class="sec">当前占用店铺</div>
+    <table><tbody>${d.bindings.map((b) => `<tr>
+      <td>${esc(b.shop_nick || b.shop_id)}</td>
+      <td class="muted">${esc(b.shop_id)}</td>
+      <td class="muted">${esc((b.bound_at || '').slice(0, 16).replace('T', ' '))}</td>
+      <td>${b.source === 'report' ? '<span class="tag t-warn">系统发现</span>' : '<span class="tag t-info">客户端</span>'}</td>
+      <td><button class="btn" onclick="unbindOne(${c.id}, '${esc(b.shop_id)}')">解绑</button></td>
+    </tr>`).join('') || '<tr><td class="muted">暂无</td></tr>'}</tbody></table>
+
+    <div class="sec">设备</div>
+    <table><tbody>${d.devices.map((x) => `<tr>
+      <td class="muted">${esc(x.machine_id)}</td><td class="muted">${esc(x.version || '')}</td>
+      <td class="muted">${esc((x.last_seen || '').slice(0, 16).replace('T', ' '))}</td>
+    </tr>`).join('') || '<tr><td class="muted">暂无</td></tr>'}</tbody></table>
+
+    <div class="sec">最近事件</div>
+    <table><tbody>${d.events.map((e) => `<tr>
+      <td class="muted" style="white-space:nowrap">${esc((e.at || '').slice(5, 16).replace('T', ' '))}</td>
+      <td>${esc(e.kind)}</td><td class="muted">${esc((e.detail || '').slice(0, 60))}</td>
+    </tr>`).join('') || '<tr><td class="muted">暂无</td></tr>'}</tbody></table>
+  `;
+  $('detail').classList.add('open');
+}
+function closeDetail() { $('detail').classList.remove('open'); }
+
+async function saveClient(id) {
+  await apiPost('client', {
+    id,
+    slots: Number($('f-slots').value),
+    expires_at: $('f-exp').value || null,
+    status: $('f-status').value,
+    base_url: $('f-base').value,
+    upload_token: $('f-token').value,
+    name: CURRENT.find((x) => x.id === id)?.name,
+  });
+  load(); openDetail(id);
+}
+
+async function unbindOne(clientId, shopId) {
+  await apiPost('unbind', { client_id: clientId, shop_id: shopId });
+  openDetail(clientId); load();
+}
+
+function newClient() {
+  const code = 'KS-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+  const name = prompt('客户名称（便于你识别）');
+  if (!name) return;
+  const base_url = prompt('结算系统地址（如 http://1.2.3.4）', 'http://');
+  const slots = Number(prompt('授权店铺位', '3') || 3);
+  apiPost('client', {
+    code, name, base_url, slots,
+    upload_token: Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2),
+    note: '',
+  }).then(load);
+}
+
+load();
+setInterval(load, 15000);
+</script>
+</body></html>

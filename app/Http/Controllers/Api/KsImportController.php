@@ -7,6 +7,7 @@ use App\Models\OrderLog;
 use App\Models\Seller;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -54,6 +55,10 @@ class KsImportController extends Controller
 
         ImportOrder::dispatch(storage_path('app/public/' . $path), $log->id);
 
+        // 向授权中心回传"本系统正在使用哪个店铺"。
+        // 这是「破解客户端也能发现超配」的关键链路：由结算系统服务器到服务器上报，客户端不参与。
+        $this->reportToLicenseCenter($seller->sellerOpenId);
+
         Log::info('[ks-import] accepted', [
             'log_id'  => $log->id,
             'shop_id' => $seller->sellerOpenId,
@@ -66,6 +71,31 @@ class KsImportController extends Controller
             'log_id' => $log->id,
             'file'   => $path,
         ]);
+    }
+
+    /**
+     * 上报到授权中心。失败绝不影响导入，只记日志。
+     */
+    private function reportToLicenseCenter(string $shopId): void
+    {
+        $base = rtrim((string) config('app.ks_license_url'), '/');
+        $code = (string) config('app.ks_client_code');
+
+        if ($base === '' || $code === '') {
+            return;   // 未接入授权中心（例如本地自测），静默跳过
+        }
+
+        try {
+            Http::timeout(2)->connectTimeout(1)->post($base . '/api/report-shops', [
+                'client_code' => $code,
+                'shop_ids'    => [$shopId],
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('[ks-import] 授权中心上报失败（不影响导入）', [
+                'shop' => $shopId,
+                'err'  => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

@@ -1,0 +1,11 @@
+{
+  "name": "ks-license",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "快手订单同步 · 授权中心",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test/run.mjs"
+  }
+}

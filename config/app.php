@@ -189,4 +189,8 @@ return [
 
     // 快手订单自动同步专用令牌（与 api_token 隔离）
     'ks_import_token' => env('KS_IMPORT_TOKEN', ''),
+
+    // 授权中心（用于回传店铺使用情况；留空则不启用）
+    'ks_license_url' => env('KS_LICENSE_URL', ''),
+    'ks_client_code' => env('KS_CLIENT_CODE', ''),
 ];
