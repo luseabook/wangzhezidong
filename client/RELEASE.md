@@ -1,5 +1,9 @@
 # 客户端发布与在线更新
 
+> 2026-11-16：客户端已取消 45 天同步窗口，默认从 `history_start_date` 全量回刷。旧配置会自动迁移（`config_version=2`）。
+> 发布新版前请把 `package.json` 的 version 从 `1.0.0` 提到 `1.0.1`（或更高），重新 `npm run dist` 并上传安装包、`latest.yml`、`.blockmap`。
+> 全量首轮耗时较长，可在托盘菜单「全量回刷历史」手动跑一次，观察平台风控与耗时。
+
 ## 1. 前置条件
 
 - Windows 代码签名证书（OV/EV）
@@ -150,6 +154,24 @@ powershell -ExecutionPolicy Bypass -File .\build\install-test-cert.ps1
 8. 保留旧安装包；需要回滚时手工安装旧版本
 
 > `electron-updater` 默认不降级。回滚时保留旧安装包并手工重装，或者发布一个版本号更高的回滚版本。
+
+## 9. 全量历史回刷（2026-11-16）
+
+客户端不再只回刷最近 45 天，改为按历史起点全量回刷：
+
+- `refresh_window_days=0`：不限窗口，从 `history_start_date` 拉到现在。
+- `history_start_date` 默认 `2023-11-01`，可在 `%APPDATA%\KsSync\config.json` 调整。
+- `max_days_per_run` 默认 4000 天（日期切片上限）。
+- `full_refresh_hour` 默认 3：每天该小时之后做一次全量回刷。
+- `full_refresh_interval_days` 默认 1：全量回刷间隔；改为 7 即每周一次。
+- 旧版 `refresh_window_days=45` 的配置会自动迁移到新配置，`config_version` 变为 2。
+- 托盘菜单新增「全量回刷历史」，可手动触发一轮全量。
+
+注意：
+
+- 全量首轮会请求从历史起点到今天的全部日期，耗时长、请求量远高于 45 天窗口；建议先手动跑一次，确认平台风控与耗时后再交给定时任务。
+- 全量期间客户端运行锁会保持，重复启动/多开会被单实例锁拦住。
+- 上传仍只针对有变动的日期，不会重复上传未变数据。
 
 ## 8. 客户端健康巡检
 
