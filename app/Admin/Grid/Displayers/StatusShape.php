@@ -27,13 +27,19 @@ class StatusShape extends AbstractDisplayer
 
     public function display(string $type = self::ORDER)
     {
-        $value = $this->value;
+        return static::render($this->value, $type);
+    }
 
+    /**
+     * 供复合单元格（订单状态 + 退款状态）复用。
+     */
+    public static function render($value, string $type = self::ORDER): string
+    {
         if ($value === null || $value === '') {
             return '';
         }
 
-        [$labels, $classes] = $this->maps($type);
+        [$labels, $classes] = static::maps($type);
 
         // 正常订单不打扰视线，只在售后列留一个弱化横线
         if ($type === self::REFUND && (int) $value === 0) {
@@ -50,7 +56,7 @@ class StatusShape extends AbstractDisplayer
         return '<span class="mono-status '.e($class).'">'.e($label).'</span>';
     }
 
-    protected function maps(string $type): array
+    protected static function maps(string $type): array
     {
         return match ($type) {
             self::ORDER => [

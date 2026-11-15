@@ -51,6 +51,8 @@ if (config('app.ui_skin') === 'mono') {
     Admin::script("document.documentElement.classList.add('mono');");
 }
 
+Admin::css('/vendor/theme/order-grid.css');
+
 /**
  * 处理标题
  */

@@ -1,0 +1,112 @@
+/* ==========================================================================
+   订单列表紧凑布局
+   只作用于加了 .order-grid 的表格；同时兼容 classic 与 mono 皮肤。
+   ========================================================================== */
+
+.table.order-grid th,
+.table.order-grid td {
+  padding: 8px;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+/* mono 皮肤默认给所有表格单元格 nowrap，这里只在本表格内改回换行 */
+html.mono body .table.order-grid th,
+html.mono body .table.order-grid td,
+html.mono body .tables-container table.order-grid th,
+html.mono body .tables-container table.order-grid td {
+  white-space: normal;
+}
+
+/* 表头不换行，避免「达人」「操作」被拆成两行 */
+.table.order-grid th,
+html.mono body .table.order-grid th,
+html.mono body .tables-container table.order-grid th {
+  white-space: nowrap;
+}
+
+.table.order-grid .order-cell {
+  line-height: 1.4;
+}
+
+.table.order-grid .order-cell-main {
+  line-height: 1.45;
+}
+
+.table.order-grid .order-cell-sub {
+  margin-top: 2px;
+  color: #8a8a86;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.table.order-grid .order-no {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: .01em;
+}
+
+.table.order-grid .order-ellipsis {
+  display: block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table.order-grid .order-money,
+.table.order-grid .order-time {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.table.order-grid .order-empty {
+  color: #bbb;
+}
+
+.table.order-grid .order-tag {
+  display: inline-block;
+  margin-right: 4px;
+  padding: 0 5px;
+  border: 1px solid rgba(0, 0, 0, .3);
+  border-radius: 2px;
+  color: #5c5c5a;
+  font-size: 10px;
+  line-height: 16px;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+.table.order-grid .order-tag-danger {
+  border-color: #d9534f;
+  color: #d9534f;
+}
+
+.table.order-grid .order-tag-solid {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #fff;
+}
+
+html.mono body .table.order-grid .order-tag {
+  border-color: rgba(10, 10, 10, .35);
+  color: #0a0a0a;
+}
+
+html.mono body .table.order-grid .order-tag-solid {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #fff;
+}
+
+html.mono body .table.order-grid .order-tag-danger {
+  border-color: #0a0a0a;
+  border-style: dashed;
+  color: #0a0a0a;
+}

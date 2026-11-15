@@ -3,21 +3,21 @@
 namespace App\Master\Controllers;
 
 use App\Admin\Exports\OrderExport;
-use App\Admin\Grid\Displayers\StatusShape;
 use App\Models\Distributor;
 use App\Models\Order;
 use App\Models\Product;
 use App\Traits\CashTrait;
+use App\Traits\OrderGridColumns;
 use Dcat\Admin\Admin;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
-use Dcat\Admin\Widgets\Card;
 
 class OrderController extends AdminController
 {
     use CashTrait;
+    use OrderGridColumns;
 
     /**
      * Make a grid builder.
@@ -43,91 +43,10 @@ class OrderController extends AdminController
         return Grid::make($builder, function (Grid $grid) use ($builder, $that) {
             $grid->model()->orderBy("payTime", "desc");
 
-            $grid->column('id')->sortable();
-            $grid->column('sellerType')
-                ->using(Order::$sellerType)
-                ->label([
-                    0 => "cyan",
-                    1 => "custom"
-                ]);
-            $grid->column('oid');
-            $grid->column('payTime');
-            $grid->column('sendTime');
-            if (config('app.ui_skin') === 'mono') {
-                $grid->column('status')->displayUsing(StatusShape::class, [StatusShape::ORDER]);
-                $grid->column('refundStatus')->displayUsing(StatusShape::class, [StatusShape::REFUND]);
-            } else {
-                $grid->column('status')
-                    ->using(Order::$status)
-                    ->label("info");
-                $grid->column('refundStatus')
-                    ->using(Order::$refundStatus)
-                    ->label("custom");
-            }
-            // $grid->column('sellerOpenId');
-            // $grid->column('sellerNick');
-            $grid->column('distributorId');
-            $grid->column('distributorName')
-                ->limit(3)
-                ->expand(function () {
-                    $card = new Card(null, $this->distributorName);
-            
-                    return "<div style='padding:10px 10px 0'>$card</div>";
-                });
-            $grid->column('itemId');
-            $grid->column('product.itemTitle')
-                ->limit(3)
-                ->expand(function () {
-                    $card = new Card(null, $this->product ? $this->product->itemTitle : '');
-            
-                    return "<div style='padding:10px 10px 0'>$card</div>";
-                });
-            $grid->column('product.price')
-                ->display(function($v) {
-                    return $v / 100;
-                })
-                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
-            $grid->column('num')->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
-            // $grid->column('totalFee')
-            //     ->display(function($v) {
-            //         return $v / 100;
-            //     });
-            $grid->column('rate')->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
-            $grid->column('cashPrice')
-                ->display(function() {
-                    return $this->commissionTotal / 100;
-                })
-                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
-            if (config('app.ui_skin') === 'mono') {
-                $grid->column('is_rate')->displayUsing(StatusShape::class, [StatusShape::BOOL]);
-            } else {
-                $grid->column('is_rate')
-                    ->using(Order::$isRate)
-                    ->label([
-                        0 => "danger",
-                        1 => "success",
-                    ]);
-            }
-            $grid->column('rate1Price')
-                ->display(function() {
-                    return $this->commission1 / 100;
-                })
-                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
-            $grid->column('rate2Price')
-                ->display(function() {
-                    return $this->commission2 / 100;
-                })
-                ->style('text-align:right')->setHeaderAttributes(['style' => 'text-align:right']);
-            if (config('app.ui_skin') === 'mono') {
-                $grid->column('cashStatus')->displayUsing(StatusShape::class, [StatusShape::CASH]);
-            } else {
-                $grid->column('cashStatus')
-                    ->label("cyan");
-            }
-            $grid->column('created_at');
-            $grid->column('updated_at')->sortable();
+            $this->orderGridColumns($grid, false);
 
-            $grid->disableActions();
+            $grid->disableEditButton();
+            $grid->disableDeleteButton();
             $grid->disableCreateButton();
             $grid->disableBatchActions();
 
@@ -213,14 +132,19 @@ class OrderController extends AdminController
     protected function detail($id)
     {
         return Show::make($id, new Order(), function (Show $show) {
+            $money = function ($value) {
+                return number_format(((int) $value) / 100, 2, '.', '');
+            };
+
             $show->field('id');
             $show->field('oid');
             $show->field('sellerOpenId');
             $show->field('sellerNick');
-            $show->field('expressFee');
-            $show->field('discountFee');
-            $show->field('totalFee');
-            $show->field('status');
+            $show->field('expressFee')->as($money);
+            $show->field('discountFee')->as($money);
+            $show->field('totalFee')->as($money);
+            $show->field('status')->using(Order::$status);
+            $show->field('refundStatus')->using(Order::$refundStatus);
             $show->field('cpsType');
             $show->field('payTime');
             $show->field('sendTime');
@@ -230,13 +154,13 @@ class OrderController extends AdminController
             $show->field('orderDetail');
             $show->field('distributorId');
             $show->field('distributorName');
-            $show->field('cpsStatus');
+            $show->field('cpsStatus')->using(Order::$cpsStatus);
             $show->field('commissionRate');
-            $show->field('estimatedIncome');
+            $show->field('estimatedIncome')->as($money);
             $show->field('platformDpRate');
             $show->field('settlementBizType');
-            $show->field('promoterServiceInCome');
-            $show->field('promoterExcitationInCome');
+            $show->field('promoterServiceInCome')->as($money);
+            $show->field('promoterExcitationInCome')->as($money);
             $show->field('orderChannel');
             $show->field('cpsDetail');
             $show->field('skuId');
@@ -244,12 +168,23 @@ class OrderController extends AdminController
             $show->field('skuNick');
             $show->field('itemId');
             $show->field('relItemId');
-            $show->field('originalPrice');
-            $show->field('goodDiscountFee');
-            $show->field('price');
-            $show->field('cpsPayStatus');
+            $show->field('originalPrice')->as($money);
+            $show->field('goodDiscountFee')->as($money);
+            $show->field('price')->as($money);
+            $show->field('cpsPayStatus')->using(Order::$cpsPayStatus);
+            $show->field('rate');
+            $show->field('is_rate')->using(Order::$isRate);
+            $show->field('commissionTotal')->as($money);
+            $show->field('commission_rate');
+            $show->field('commission1')->as($money);
+            $show->field('commission1_rate');
+            $show->field('commission2')->as($money);
+            $show->field('commission2_rate');
             $show->field('created_at');
             $show->field('updated_at');
+
+            $show->disableEditButton();
+            $show->disableDeleteButton();
         });
     }
 
