@@ -95,9 +95,8 @@ class ShowOrderCommission extends Command
         $order = Order::query()
             ->with("product")
             ->ofCommission()
-            ->where("importStatus", 0)
             ->where("commission1", 0)
-            ->where("payTime", "<=", now()->subHours(admin_setting("commission1_days", 72)))
+            ->where("sendTime", "<=", now()->subHours(admin_setting("commission1_days", 72)))
             ->where("oid", $oid)
             ->first();
 

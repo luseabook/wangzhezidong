@@ -29,7 +29,7 @@ class AllCash extends Card
     {
         parent::init();
 
-        $this->title('累计预估佣金（元）');
+        $this->title('累计预估佣金（元，不含团长）');
     }
 
     /**

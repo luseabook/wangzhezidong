@@ -12,6 +12,7 @@ use App\Master\Metrics\CanCash;
 use App\Master\Metrics\Chart\Commission;
 use App\Master\Metrics\Chart\Order as ChartOrder;
 use App\Master\Metrics\DoneCash;
+use App\Master\Metrics\LeaderCash;
 use App\Master\Metrics\TodayCanCash;
 use App\Master\Metrics\TotalOrder;
 use App\Master\Metrics\TotalPay;
@@ -57,6 +58,7 @@ class HomeController extends Controller
                 $row->column(3, new UnCash());
                 // $row->column(3, new TodayCanCash($distributor_ids));
                 $row->column(3, new DoneCash());
+                $row->column(3, new LeaderCash());
                 $row->column(12, $this->countOfMaster());
                 $row->column(12, $this->chartDistributor());
                 $row->column(12, new ChartOrder());

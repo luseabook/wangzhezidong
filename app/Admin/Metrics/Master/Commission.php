@@ -73,22 +73,22 @@ class Commission extends Line
                     ->whereIn("distributorId", $distributor_ids)
                     ->ofCommission();
 
-        $commission1Total = (clone $model)->sum('commission1');   
-        $commission2Total = (clone $model)->sum('commission2');   
+        $commission1Total = (clone $model)->sum('commission1') / 100;
+        $commission2Total = (clone $model)->sum('commission2') / 100;
 
         switch ($request->get('option')) {
             case 'year':
-                $commission1 = (clone $model)->selectRaw("SUM(commission1) as total,DATE_FORMAT( commission1Time, '%Y' ) AS `date`");
-                $commission2 = (clone $model)->selectRaw("SUM(commission2) as total,DATE_FORMAT( commission2Time, '%Y' ) AS `date`");
+                $commission1 = (clone $model)->selectRaw("SUM(commission1)/100 as total,DATE_FORMAT( commission1Time, '%Y' ) AS `date`");
+                $commission2 = (clone $model)->selectRaw("SUM(commission2)/100 as total,DATE_FORMAT( commission2Time, '%Y' ) AS `date`");
                 break;
             case 'month':
-                $commission1 = (clone $model)->selectRaw("SUM(commission1) as total,DATE_FORMAT( commission1Time, '%Y-%m' ) AS `date`");
-                $commission2 = (clone $model)->selectRaw("SUM(commission2) as total,DATE_FORMAT( commission2Time, '%Y-%m' ) AS `date`");
+                $commission1 = (clone $model)->selectRaw("SUM(commission1)/100 as total,DATE_FORMAT( commission1Time, '%Y-%m' ) AS `date`");
+                $commission2 = (clone $model)->selectRaw("SUM(commission2)/100 as total,DATE_FORMAT( commission2Time, '%Y-%m' ) AS `date`");
                 break;
             case 'day':
             default:
-                $commission1 = (clone $model)->selectRaw("SUM(commission1) as total,DATE_FORMAT( commission1Time, '%Y-%m-%d' ) AS `date`");
-                $commission2 = (clone $model)->selectRaw("SUM(commission2) as total,DATE_FORMAT( commission2Time, '%Y-%m-%d' ) AS `date`");
+                $commission1 = (clone $model)->selectRaw("SUM(commission1)/100 as total,DATE_FORMAT( commission1Time, '%Y-%m-%d' ) AS `date`");
+                $commission2 = (clone $model)->selectRaw("SUM(commission2)/100 as total,DATE_FORMAT( commission2Time, '%Y-%m-%d' ) AS `date`");
         }
 
         $commission1 = $commission1->groupBy('date')
@@ -105,7 +105,10 @@ class Commission extends Line
         $category = $commission1->pluck("date")->toArray();
 
         // 卡片内容
-        $this->withContent("第一次结算：{$commission1Total} | 第二次结算：{$commission2Total}");
+        $this->withContent(
+            "第一次结算：" . number_format((float) $commission1Total, 2, '.', '')
+            . " | 第二次结算：" . number_format((float) $commission2Total, 2, '.', '')
+        );
         // 图表数据
         $this->withChart($commission1Data, $commission2Data);
         // 图表类别

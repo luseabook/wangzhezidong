@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * 订单。
+ *
+ * importStatus：导入批次内处理标记（0 待处理 / 1 第一次结算完成 / 2 第二次结算完成），
+ * 每次导入会重置为 0；结算阶段请以 cpsPayStatus 为准，首/尾笔不再用它做闸门。
+ */
 class Order extends Base
 {
     public static $status = [
@@ -48,6 +54,7 @@ class Order extends Base
         1 => "第一次已结算",
         2 => "第二次已结算",
         3 => "售后",
+        4 => "订单关闭",
     ];
 
     public static $isRefund = [
@@ -85,6 +92,19 @@ class Order extends Base
     }
 
     /**
+     * 实际生效的团长比例：只有商品绑定了团长（master_id != 0）才扣 leader_rate。
+     * 避免“填了团长比例但没选团长”导致首/尾笔拆分少算 L。
+     */
+    public function getEffectiveLeaderRateAttribute()
+    {
+        if(!$this->product || (int) $this->product->master_id === 0) {
+            return 0;
+        }
+
+        return (int) $this->product->leader_rate;
+    }
+
+    /**
      * 总分佣比例
      *
      * @return int
@@ -92,14 +112,10 @@ class Order extends Base
     public function getRateAttribute()
     {
         if(!$this->product || !$this->product->commissionRate) return 0;
-        
+
         if(in_array($this->status, [0, 10, 80])) return 0;
 
-        if($this->product->master_id != 0 && $this->product->leader_rate > 0) {
-            return ($this->product->commissionRate - 1 - $this->product->leader_rate);
-        }
-
-        return ($this->product->commissionRate-1);
+        return ($this->product->commissionRate - 1 - $this->effective_leader_rate);
     }
 
     /**
@@ -107,63 +123,62 @@ class Order extends Base
      */
     public function getLeaderRateAttribute()
     {
-        if($this->product && $this->product->master_id != 0 && $this->product->leader_rate > 0) {
-            return $this->product->leader_rate;
+        return $this->effective_leader_rate;
+    }
+
+    /**
+     * 当前订单渠道对应的首笔结算比例（百分数）。
+     * 视频号用 wechat_rate1 / wechat_commission1_rate，快手用 rate1 / commission1_rate。
+     */
+    public function getStage1PercentAttribute()
+    {
+        if($this->sellerType) {
+            if($this->distributor && $this->distributor->master
+                && ($this->distributor->master->wechat_rate1 + $this->distributor->master->wechat_rate2)) {
+                return $this->distributor->master->wechat_rate1;
+            }
+
+            return admin_setting('wechat_commission1_rate', 50);
         }
 
-        return 0;
+        if($this->distributor && $this->distributor->master
+            && ($this->distributor->master->rate1 + $this->distributor->master->rate2)) {
+            return $this->distributor->master->rate1;
+        }
+
+        return admin_setting('commission1_rate', 50);
+    }
+
+    /**
+     * 当前订单渠道对应的尾笔结算比例（百分数）。
+     */
+    public function getStage2PercentAttribute()
+    {
+        if($this->sellerType) {
+            if($this->distributor && $this->distributor->master
+                && ($this->distributor->master->wechat_rate1 + $this->distributor->master->wechat_rate2)) {
+                return $this->distributor->master->wechat_rate2;
+            }
+
+            return admin_setting('wechat_commission2_rate', 50);
+        }
+
+        if($this->distributor && $this->distributor->master
+            && ($this->distributor->master->rate1 + $this->distributor->master->rate2)) {
+            return $this->distributor->master->rate2;
+        }
+
+        return admin_setting('commission2_rate', 50);
     }
 
     public function getLeaderRate1Attribute()
     {
-        if($this->product && $this->product->master_id != 0 && $this->product->leader_rate > 0) {
-            // 视频号
-            if($this->sellerType) {
-                // 设置了结算比例
-                if($this->distributor && $this->distributor->master && ($this->distributor->master->wechat_rate1 + $this->distributor->master->wechat_rate2))
-                {
-                    return $this->product->leader_rate * $this->distributor->master->wechat_rate1 / 100;
-                }
-
-                return $this->product->leader_rate * admin_setting('wechat_commission1_rate', 50) / 100;
-            }
-
-            // 设置了结算比例
-            if($this->distributor && $this->distributor->master && ($this->distributor->master->rate1 + $this->distributor->master->rate2))
-            {
-                return $this->product->leader_rate * $this->distributor->master->rate1 / 100;
-            }
-
-            return $this->product->leader_rate * admin_setting('commission1_rate', 50) / 100;
-        }
-
-        return 0;
+        return $this->effective_leader_rate * $this->stage1_percent / 100;
     }
 
     public function getLeaderRate2Attribute()
     {
-        if($this->product && $this->product->master_id != 0 && $this->product->leader_rate > 0) {
-            // 视频号
-            if($this->sellerType) {
-                // 设置了结算比例
-                if($this->distributor && $this->distributor->master && ($this->distributor->master->wechat_rate1 + $this->distributor->master->wechat_rate2))
-                {
-                    return $this->product->leader_rate * $this->distributor->master->wechat_rate2 / 100;
-                }
-
-                return $this->product->leader_rate * admin_setting('wechat_commission2_rate', 50) / 100;
-            }
-
-            // 设置了结算比例
-            if($this->distributor && $this->distributor->master && ($this->distributor->master->rate1 + $this->distributor->master->rate2))
-            {
-                return $this->product->leader_rate * $this->distributor->master->rate2 / 100;
-            }
-
-            return $this->product->leader_rate * admin_setting('commission2_rate', 50) / 100;
-        }
-
-        return 0;
+        return $this->effective_leader_rate * $this->stage2_percent / 100;
     }
 
     /**
@@ -174,59 +189,24 @@ class Order extends Base
     public function getRate1Attribute()
     {
         if(!$this->product || !$this->product->commissionRate) return 0;
-        
+
         if(in_array($this->status, [0, 10, 80])) return 0;
 
-        // 视频号
-        if($this->sellerType) {
-            // 设置了结算比例
-            if($this->distributor && $this->distributor->master && ($this->distributor->master->wechat_rate1 + $this->distributor->master->wechat_rate2))
-            {
-                return ($this->product->commissionRate-1-$this->product->leader_rate) * $this->distributor->master->wechat_rate1 / 100;
-            }
-
-            return ($this->product->commissionRate-1-$this->product->leader_rate) * admin_setting('wechat_commission1_rate', 50) / 100;
-        }
-
-        // 设置了结算比例
-        if($this->distributor && $this->distributor->master && ($this->distributor->master->rate1 + $this->distributor->master->rate2))
-        {
-            return ($this->product->commissionRate-1-$this->product->leader_rate) * $this->distributor->master->rate1 / 100;
-        }
-
-        return ($this->product->commissionRate-1-$this->product->leader_rate) * admin_setting('commission1_rate', 50) / 100;
-        
+        return ($this->product->commissionRate - 1 - $this->effective_leader_rate) * $this->stage1_percent / 100;
     }
 
     /**
      * 第二次分佣比例
-     * 
+     *
      * @return int
      */
     public function getRate2Attribute()
     {
         if(!$this->product || !$this->product->commissionRate) return 0;
-        
+
         if(in_array($this->status, [0, 10, 80])) return 0;
 
-        // 视频号
-        if($this->sellerType) {
-            // 设置了结算比例
-            if($this->distributor && $this->distributor->master && ($this->distributor->master->wechat_rate1 + $this->distributor->master->wechat_rate2))
-            {
-                return ($this->product->commissionRate-1-$this->product->leader_rate) * $this->distributor->master->wechat_rate2 / 100;
-            }
-
-            return ($this->product->commissionRate-1-$this->product->leader_rate) * admin_setting('wechat_commission2_rate', 50) / 100;
-        }
-
-        // 设置了结算比例
-        if($this->distributor && $this->distributor->master && ($this->distributor->master->rate1 + $this->distributor->master->rate2))
-        {
-            return ($this->product->commissionRate-1-$this->product->leader_rate) * $this->distributor->master->rate2 / 100;
-        }
-
-        return ($this->product->commissionRate-1-$this->product->leader_rate) * admin_setting('commission2_rate', 50) / 100;
+        return ($this->product->commissionRate - 1 - $this->effective_leader_rate) * $this->stage2_percent / 100;
     }
 
     /**
@@ -238,6 +218,9 @@ class Order extends Base
     {
         // 没有关联的商品或者商品未设置分佣
         if(!$this->product || !$this->product->commissionRate) return 0;
+
+        // 没有发货时间：结算范围不会命中（scopeOfCommission 同样要求 sendTime 非空）
+        if(!$this->sendTime) return 0;
 
         // 订单状态
         if(!in_array($this->status, [30, 40, 50, 70])) return 0;

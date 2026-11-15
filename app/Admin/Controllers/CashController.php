@@ -152,26 +152,34 @@ class CashController extends AdminController
 
             $form->disableDeleteButton();
         })->saving(function (Form $form) use ($that) {
+            $status = (int) ($form->status ?? 0);
+            $amount = str_replace(',', '', (string) $form->amount);
+
             if($form->isCreating()) {
                 if($form->amount < 0) {
                     return $form->response()->error('提现金额不能小于或等于0');
                 }
 
-                // 判断提现金额小于等于可提现金额
-                if(floatval($form->amount) > floatval($that->canCommission($form->master_id))) {
+                // 只有待审核/确认占用额度；驳回不校验。
+                if(in_array($status, [0, 1], true)
+                    && bccomp($amount, (string) $that->canCommission($form->master_id), 2) > 0) {
                     return $form->response()->error('提现金额不能大于可提现金额');
                 }
 
                 $form->apply_at = now();
             }
 
-            // 判断提现金额小于等于可提现金额
-            if($form->isEditing() && $form->status == 1 && floatval($form->amount) > floatval($that->canCommissionExcludeCashId($form->master_id, $form->getKey()))) {
+            // 待审核/确认都要占用额度；编辑时排除自身再比较。
+            if($form->isEditing()
+                && in_array($status, [0, 1], true)
+                && bccomp($amount, (string) $that->canCommissionExcludeCashId($form->master_id, $form->getKey()), 2) > 0) {
                 return $form->response()->error('提现金额不能大于可提现金额');
             }
 
-            if($form->status == 1) {
+            if($status === 1) {
                 $form->pay_at = now();
+            } else {
+                $form->pay_at = null;
             }
         })->saved(function (Form $form, $result) {
             $cash = Cash::query()->find($form->getKey());

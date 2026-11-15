@@ -54,6 +54,8 @@ class AddMasterChild extends Form implements LazyRenderable
             ->options(Master::query()->where("id", "<>", $id)->where("parent_id", 0)->get()->pluck("name", "id"))
             ->required();
 
-        $this->rate("parent_rate", "抽成百分比")->required();
+        $this->rate("parent_rate", "抽成百分比")
+            ->required()
+            ->help("按订单实付的百分点抽成；高于订单可分佣率时按订单分佣率封顶。");
     }
 }

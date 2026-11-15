@@ -30,6 +30,18 @@ class OrderObserver
         'distributorName',
     ];
 
+    /**
+     * 影响结算金额/归属的字段。
+     * 这些字段变化时，已计算的佣金可能失效，标记 settlement_dirty 等待主命令重算。
+     */
+    public const SETTLEMENT_INPUTS = [
+        'totalFee',
+        'expressFee',
+        'itemId',
+        'distributorId',
+        'sellerType',
+    ];
+
     /** 自动导入时由 DealImportOrder 之外的调用方设置（不改原 Job，通过中间件/闭包设置） */
     public static ?int $orderLogId = null;
 
@@ -47,6 +59,8 @@ class OrderObserver
             return;
         }
 
+        $this->markSettlementDirty($order, $dirty);
+
         $rows = [];
         foreach (self::TRACKED as $field) {
             if (!array_key_exists($field, $dirty)) {
@@ -63,6 +77,31 @@ class OrderObserver
         if (!empty($rows)) {
             $this->safeInsert($rows);
         }
+    }
+
+    /**
+     * 标记需要重算的订单。
+     * 只标记，不在导入/编辑过程中做资金冲正；冲正与重结由结算命令统一处理。
+     */
+    private function markSettlementDirty(Order $order, array $dirty): void
+    {
+        if (! array_intersect(array_keys($dirty), self::SETTLEMENT_INPUTS)) {
+            return;
+        }
+
+        // 已售后/已关闭的订单不在这里标记；恢复时由对应流程按当前字段重结。
+        if (in_array((int) $order->cpsPayStatus, [3, 4], true)) {
+            return;
+        }
+
+        // 还没算过佣金的订单不需要标记：主命令下一次会按当前字段直接计算。
+        if ((int) $order->commissionTotal === 0
+            && (int) $order->commission1 === 0
+            && (int) $order->commission2 === 0) {
+            return;
+        }
+
+        $order->settlement_dirty = 1;
     }
 
     /**

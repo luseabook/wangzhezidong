@@ -59,9 +59,13 @@ class UpdateMasterCommission implements ShouldQueue
                     }
                     $childCommission = $this->parentCommissioned($childDistributor_ids);
 
+                    // 与 CashTrait::canCommission() 保持同一口径：
+                    // 可提现 = 已结算 + 下级抽成 + 团长流水 - 已占用提现。
+                    $leaderCommission = $this->leaderCommissioned($master->id);
+
                     $master->commissioned = $commissioned;
                     $master->cashed = $cashed;
-                    $master->canCommission = bcadd($canCommission, $childCommission, 2);
+                    $master->canCommission = bcadd(bcadd($canCommission, $childCommission, 2), $leaderCommission, 2);
                     $master->save();
             });
     }

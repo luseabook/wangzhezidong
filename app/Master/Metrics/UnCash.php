@@ -29,7 +29,7 @@ class UnCash extends Card
     {
         parent::init();
 
-        $this->title('预估剩余佣金（元）');
+        $this->title('预估剩余佣金（元，不含团长）');
     }
 
     /**

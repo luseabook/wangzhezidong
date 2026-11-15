@@ -202,6 +202,7 @@ trait OrderGridColumns
             '第一次已结算' => 'success',
             '第二次已结算' => 'success',
             '售后' => 'danger',
+            '订单关闭' => 'danger',
         ];
 
         return $this->orderLabel($value, $colors[$value] ?? 'default');

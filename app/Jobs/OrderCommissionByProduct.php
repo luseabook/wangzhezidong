@@ -2,193 +2,57 @@
 
 namespace App\Jobs;
 
-use App\Models\Distributor;
-use App\Models\Master;
-use App\Models\Money;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\OrderSettlementReset;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * 商品佣金率变更后的结算重算。
+ *
+ * 把该商品下未售后、已计算/已结算的订单按实际账本净额冲回，
+ * 重置佣金/上级/团长/结算状态，再交给主命令按新费率完整重结。
+ */
 class OrderCommissionByProduct implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $product;
 
-    /**
-     * Create a new job instance.
-     */
     public function __construct(Product $product)
     {
         $this->product = $product;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
-        $this->commisson();
+        $count = 0;
+        $resetter = app(OrderSettlementReset::class);
 
-        $distributorIds = Order::query()
-                ->where("itemId", $this->product->itemId)
-                ->get()
-                ->pluck("distributorId")
-                ->toArray();
-
-        Master::query()
-            ->whereHas("distributors", function ($query) use ($distributorIds) {
-                $query->whereIn("distributorId", $distributorIds);
-            })
-            ->get()
-            ->each(function ($master) {
-                $distributor_ids = Distributor::query()
-                    ->where("master_id", $master->id)
-                    ->where("status", 1)
-                    ->get()
-                    ->pluck("distributorId")
-                    ->toArray();
-
-                $this->firstCommisson($master, $distributor_ids);
-                $this->secondCommisson($master, $distributor_ids);
-                $this->refund($master, $distributor_ids);
-            });
-        
-    }
-
-    /**
-     * 计算预估总佣金
-     */
-    private function commisson()
-    {
         Order::query()
-            ->with("product")
-            ->ofCommission()
             ->where("itemId", $this->product->itemId)
-            ->where("commissionTotal", "<>", 0)
-            ->chunk(1000, function($orders) {
+            ->whereIn("cpsPayStatus", [0, 1, 2])
+            ->whereIn("refundStatus", [0, 70])
+            ->chunkById(500, function ($orders) use (&$count, $resetter) {
                 foreach ($orders as $order) {
-                    $order->commissionTotal = intval(($order->totalFee - $order->expressFee) * $order->rate / 100);
-                    $order->save();
+                    $resetter->reverseMoney($order, "商品改率冲正");
+                    $resetter->reset($order);
+                    $count += 1;
                 }
             });
-    }
 
-    private function firstCommisson($master, $distributor_ids)
-    {
-        Order::query()
-            ->with("product")
-            ->where("itemId", $this->product->itemId)
-            ->whereIn("distributorId", $distributor_ids)
-            ->ofCommission()
-            ->where("commission1", "<>", 0)
-            ->where("cpsPayStatus", 1)
-            ->where("payTime", "<=", now()->subHours(admin_setting("commission1_days", 72)))
-            ->chunk(1000, function($orders) use ($master) {
-                foreach ($orders as $order) {
-                    $currentCommission = $order->commission1;
-                    $newCommission = 
-                    intval(($order->totalFee - $order->expressFee) * $order->rate1 / 100);
-                    $order->commission1 = $newCommission;
-                    $order->commission1Time = now(); 
-                    $order->save();
+        Log::info("[order-commission-by-product] reset {$count} orders", [
+            "itemId" => $this->product->itemId,
+            "commissionRate" => $this->product->commissionRate,
+        ]);
 
-                    $type = $newCommission > $currentCommission ? 1 : 2;
-                    $commission = $newCommission - $currentCommission;
-                    $commission = $commission > 0 ? $commission : -$commission;
-
-                    $this->addMoneyLog($order->oid, $type, $commission, $master, "第一次结算");
-                }
-            });
-    }
-
-    private function secondCommisson($master, $distributor_ids)
-    {
-        Order::query()
-            ->with("product")
-            ->where("itemId", $this->product->itemId)
-            ->whereIn("distributorId", $distributor_ids)
-            ->ofCommission()
-            ->where("status", 70)
-            ->where("commission2", "<>", 0)
-            ->where("cpsPayStatus", 2)
-            ->where("payTime", "<=", now()->subHours(admin_setting("commission2_days", 600)))
-            ->chunk(1000, function($orders) use ($master) {
-                foreach ($orders as $order) {
-                    $currentCommission = $order->commission2;
-                    // $newCommission = 
-                    //     ($order->totalFee - $order->expressFee) * $order->rate2 / 100;
-                    $newCommission = $order->commissionTotal - $order->commission1;
-                    $order->commission2 = $newCommission;
-                    $order->commission2Time = now(); 
-                    $order->save();
-
-                    $type = $newCommission > $currentCommission ? 1 : 2;
-                    $commission = $newCommission - $currentCommission;
-                    $commission = $commission > 0 ? $commission : -$commission;
-
-                    $this->addMoneyLog($order->oid, $type, $commission, $master, "第二次结算");
-                }
-            });
-    }
-
-    private function refund($master, $distributor_ids)
-    {
-        Order::query()
-            ->with("product")
-            ->where("itemId", $this->product->itemId)
-            ->whereIn("distributorId", $distributor_ids)
-            ->ofRefund()
-            ->where("cpsPayStatus", 3)
-            ->chunk(1000, function($orders) use ($master) {
-                foreach ($orders as $order) {
-                    $currentCommission = $order->commission1 + $order->commission2;
-                    if($currentCommission > 0) {
-                        $newCommission1 = 
-                        intval(($order->totalFee - $order->expressFee) * $order->rate1 / 100);
-                        $newCommission2 = 
-                        intval(($order->totalFee - $order->expressFee) * $order->rate2 / 100);
-                        $order->commission1 = $order->commission1 > 0 ? $newCommission1 : 0;
-                        $order->commission2 = $order->commission2 > 0 ? $newCommission2 : 0;
-                        $order->save();
-
-                        $commission = $order->commission1 + $order->commission2;
-
-                        $commission = $commission - $currentCommission;
-                        $commission = $commission > 0 ? $commission : -$commission;
-
-                        $this->addMoneyLog($order->oid, 2, $commission, $master, "售后");
-                    }
-                }
-            });
-    }
-
-    private function addMoneyLog($oid, $type, $commission, $master, $content)
-    {
-        $master = Master::find($master->id);
-        $before_money = $master->commission_money;
-        if($type == 1) {
-            $master->increment("commission_money", $commission);
-        } else {
-            $master->decrement("commission_money", $commission);
-        }
-        $after_money = $master->commission_money;
-
-        Money::query()
-            ->create([
-                "master_id" => $master->id,
-                "oid" => $oid,
-                "type" => $type,
-                "money" => $commission,
-                "before_money" => $before_money,
-                "after_money" => $after_money,
-                "content" => $content,
-            ]);
+        // 主命令按数据库里的最新商品费率重新计算并结算这些订单。
+        Artisan::queue("create:order-commission");
     }
 }

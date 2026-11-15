@@ -41,38 +41,6 @@ trait CashTrait
     }
 
     /**
-     * 第一次待分佣总金额
-     *
-     * @return float
-     */
-    public function unFirstCommission($distributor_ids)
-    {
-        return Order::query()
-            ->whereIn('distributorId', $distributor_ids)
-            ->where('sendTime', '>', now()->subHours(admin_setting('commission1_days', 72)))
-            ->ofCommission()
-            ->sum('commissionTotal') / 100 / 2;
-    }
-
-    /**
-     * 第二次待分佣总金额
-     * 订单 30已付款 40已发货 50已签收 70订单成功
-     *
-     * @return float
-     */
-    public function unSecondCommission($distributor_ids)
-    {
-        return Order::query()
-            ->where(function ($query) {
-                $query->where('sendTime', '>', now()->subHours(admin_setting('commission2_days', 600)))
-                    ->orWhere('status', '<>', 70);
-            })
-            ->ofCommission()
-            ->whereIn('distributorId', $distributor_ids)
-            ->sum('commissionTotal') / 100 / 2;
-    }
-
-    /**
      * 可结算总金额
      *
      * @return float
@@ -392,15 +360,20 @@ trait CashTrait
      */
     public function leaderCommissioned($master_id)
     {
+        // 只统计团长分佣。上级抽成虽然也是 is_parent=1，但已经由
+        // parentCommissioned() 按订单字段计算；这里再算一次会重复，
+        // 而且历史上级流水金额与订单口径不同，会把上级可提现算错。
         $addMoney = Money::query()
             ->where('master_id', $master_id)
             ->where('is_parent', 1)
+            ->where('is_leader', 1)
             ->where('type', 1)
             ->sum('money') / 100;
 
         $money = Money::query()
             ->where('master_id', $master_id)
             ->where('is_parent', 1)
+            ->where('is_leader', 1)
             ->where('type', 2)
             ->sum('money') / 100;
 

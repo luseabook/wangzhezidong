@@ -105,6 +105,7 @@ class StatusShape extends AbstractDisplayer
                     '第一次已结算' => 'mono-status-green',
                     '第二次已结算' => 'mono-status-green',
                     '售后' => 'mono-status-red',
+                    '订单关闭' => 'mono-status-red',
                 ],
             ],
             default => [[], []],

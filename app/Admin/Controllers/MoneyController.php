@@ -29,6 +29,12 @@ class MoneyController extends AdminController
                     0 => "info",
                     1 => "cyan",
                 ]);
+            $grid->column('is_leader')
+                ->using(Money::$is_leader)
+                ->label([
+                    0 => "info",
+                    1 => "success",
+                ]);
             $grid->column('type')
                 ->using(Money::$type)
                 ->label([
@@ -79,6 +85,9 @@ class MoneyController extends AdminController
                     ->width(3);
                 $filter->equal("is_parent")
                     ->select(Money::$is_parent)
+                    ->width(2);
+                $filter->equal("is_leader")
+                    ->select(Money::$is_leader)
                     ->width(2);
                 $filter->equal("type")
                     ->select(Money::$type)

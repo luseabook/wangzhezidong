@@ -154,6 +154,10 @@ class ProductController extends AdminController
             $form->display('updated_at');
 
             $form->saving(function (Form $form) {
+                if($form->leader_rate && !$form->master_id) {
+                    return $form->response()->error('设置团长比例时必须选择团长');
+                }
+
                 if($form->commissionRate && $form->leader_rate) {
                     if(($form->commissionRate - 1) < $form->leader_rate) {
                         return $form->response()->error('团长抽成比例不能大于自定义商品参与结算分销率');

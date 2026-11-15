@@ -3,15 +3,14 @@
 namespace App\Admin\Forms;
 
 use App\Models\Cash;
-use App\Models\Master;
-use App\Traits\CashTrait;
+use App\Services\CashAudit;
 use Dcat\Admin\Widgets\Form;
 use Dcat\Admin\Traits\LazyWidget;
 use Dcat\Admin\Contracts\LazyRenderable;
 
 class AuditCash extends Form implements LazyRenderable
 {
-    use LazyWidget, CashTrait;
+    use LazyWidget;
 
     /**
      * Handle the form request.
@@ -22,60 +21,47 @@ class AuditCash extends Form implements LazyRenderable
      */
     public function handle(array $input)
     {
-        $ids = explode(",", $input['ids'] ?? null);
-        if(!$ids) {
+        $ids = $this->normalizeIds($input['ids'] ?? null);
+        if (empty($ids)) {
             return $this->response()->error('参数错误~');
         }
 
-        $master_ids = [];
-        // 提现通过时验证
-        if($input['status'] == 1) {
-            foreach ($ids as $id) {
-                $cash = Cash::query()->find($id);
-                // 判断提现金额小于等于可提现金额
-                // if($cash->amount > $this->canCommissionExcludeCashId($cash->master_id, $cash->id)) {
-                //     return $this->response()->error('提现金额不能大于可提现金额');
-                // }
+        $status = (int) ($input['status'] ?? 0);
+        $remark = $input['remark'] ?? null;
+        $audit = app(CashAudit::class);
 
-                $master_ids[] = $cash->master_id;
+        if ($status === 1) {
+            $result = $audit->approve($ids);
+
+            if (! $result['ok']) {
+                if (empty($result['failures'])) {
+                    return $this->response()->error('未找到可确认的提现记录');
+                }
+
+                $lines = [];
+                foreach ($result['failures'] as $failure) {
+                    $lines[] = "达人 {$failure['master_id']}：本次选择合计 {$failure['requested']}，当前可提现 {$failure['available']}（记录 " . implode(',', $failure['ids']) . "）";
+                }
+
+                return $this->response()->error("可提现金额不足，本次未确认任何记录：\n" . implode("\n", $lines));
             }
+
+            $message = '批量转账成功~';
+            if (! empty($result['skipped'])) {
+                $message .= '（跳过 ' . count($result['skipped']) . ' 笔已确认记录）';
+            }
+
+            return $this->response()->success($message)->refresh();
         }
 
-        if($input['status'] == 1) {
-            Cash::query()
-                ->whereIn('id', $ids)
-                ->where("status", "<>", 1)
-                ->update([
-                    "pay_at" => now(),
-                    "status" => $input['status'],
-                    "remark" => $input['remark'] ?? null,
-                ]);
-        } else {
-            Cash::query()
-                ->whereIn('id', $ids)
-                ->where("status", "<>", 1)
-                ->update([
-                    "status" => $input['status'],
-                    "remark" => $input['remark'] ?? null,
-                ]);
+        $result = $audit->setStatus($ids, $status, $remark);
+
+        $message = $status === 2 ? '批量驳回成功~' : '批量更新成功~';
+        if (! empty($result['skipped'])) {
+            $message .= '（跳过 ' . count($result['skipped']) . ' 笔已确认记录）';
         }
 
-        // 修改用户累计提现金额
-        $master_ids = array_unique($master_ids);
-        foreach ($master_ids as $master_id) {
-            $cashed = Cash::query()
-                ->where("master_id", $master_id)
-                ->where("status", 1)
-                ->sum("amount");
-            Master::query()
-                ->where("id", $master_id)
-                ->update(["cash_money" => $cashed]);
-        }
-
-        return $this
-				->response()
-				->success('批量转账成功~')
-                ->refresh();
+        return $this->response()->success($message)->refresh();
     }
 
     /**
@@ -88,7 +74,20 @@ class AuditCash extends Form implements LazyRenderable
             ->when(2, function (Form $form) {
                 $form->text('remark');
             })->required();
-    
+
         $this->hidden('ids')->attribute('id', 'batch-audit-id');
+    }
+
+    private function normalizeIds($ids): array
+    {
+        if (is_string($ids)) {
+            $ids = explode(',', $ids);
+        }
+
+        if (! is_array($ids)) {
+            return [];
+        }
+
+        return array_values(array_unique(array_filter(array_map('intval', $ids))));
     }
 }

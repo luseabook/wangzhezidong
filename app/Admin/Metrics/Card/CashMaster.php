@@ -76,7 +76,7 @@ class CashMaster extends Card
             $html = "暂无数据~";
         } else {
             foreach($lists as $key => $list) {
-                $html .= "<li class='list-group-item d-flex justify-content-between align-items-center'>".($key+1).". {$list->master->username}<span class='badge badge-primary badge-pill'>{$list->cash}</span></li>";
+                $html .= "<li class='list-group-item d-flex justify-content-between align-items-center'>".($key+1).". {$list->master->username}<span class='badge badge-primary badge-pill'>{$list->cash_yuan}</span></li>";
             }
         }
         return $this->content(
