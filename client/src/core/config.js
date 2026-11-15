@@ -20,7 +20,10 @@ export function dataRoot() {
   return ROOT;
 }
 
+const CONFIG_VERSION = 2;
+
 const DEFAULT = {
+  config_version: CONFIG_VERSION,
   license: '',
   license_server: '',       // 授权中心地址，安装包预置
   machine_id: '',           // 首次运行时生成
@@ -40,7 +43,11 @@ const DEFAULT = {
     detail_enabled: true,       // 用详情接口补发货时间（佣金能否算出来的开关）
     detail_max_per_run: 120,    // 每轮最多补抓多少单，避免拖长同步与触发风控              // 硬锁：平台 pageSize>10 会触发风控
     non_terminal_window_days: 15,
-    refresh_window_days: 45,
+    refresh_window_days: 0,       // 0 = 不限窗口，按 history_start_date 全量回刷
+    history_start_date: '2023-11-01',
+    max_days_per_run: 4000,
+    full_refresh_hour: 3,         // 每天该小时之后做一次全量回刷
+    full_refresh_interval_days: 1,
   },
   export: { sheet_name: 'Sheet1', only_distributor: true },
 };
@@ -50,10 +57,29 @@ export function configPath() { return path.join(dataRoot(), 'config.json'); }
 export function loadConfig() {
   try {
     const raw = JSON.parse(fs.readFileSync(configPath(), 'utf8'));
-    return merge(structuredClone(DEFAULT), raw);
+    const cfg = merge(structuredClone(DEFAULT), raw);
+    return migrateConfig(cfg, raw);
   } catch {
     return structuredClone(DEFAULT);
   }
+}
+
+/** 旧版默认只看最近 45 天；升级后改为按 history_start_date 全量回刷。 */
+function migrateConfig(cfg, raw) {
+  const version = Number(raw?.config_version || 1);
+  if (version >= CONFIG_VERSION) return cfg;
+
+  if (!raw?.sync?.history_start_date) {
+    cfg.sync.refresh_window_days = 0;
+    cfg.sync.history_start_date = '2023-11-01';
+  }
+  cfg.sync.max_days_per_run = cfg.sync.max_days_per_run || 4000;
+  cfg.sync.full_refresh_hour = cfg.sync.full_refresh_hour ?? 3;
+  cfg.sync.full_refresh_interval_days = cfg.sync.full_refresh_interval_days ?? 1;
+  cfg.config_version = CONFIG_VERSION;
+
+  try { saveConfig(cfg); } catch { /* 配置目录不可写时沿用内存值 */ }
+  return cfg;
 }
 
 export function saveConfig(cfg) {

@@ -84,6 +84,15 @@ export function removeShop(id) {
 
 export function activeShops() { return listShops().filter((s) => s.enabled); }
 
+/** 最近一次全量历史回刷时间（存在 shops.json 根部） */
+export function getFullRefresh() { return read().full_refresh || null; }
+
+export function markFullRefresh() {
+  const db = read();
+  db.full_refresh = { at: new Date().toISOString() };
+  write(db);
+}
+
 // 每店本地库：按日期分片，避免单个大 JSON 随天数膨胀
 // 目录：shops\<id>\orders\<YYYY-MM-DD>.json
 export function ordersDir(shopId) {

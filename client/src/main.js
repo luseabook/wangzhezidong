@@ -117,6 +117,7 @@ if (!app.requestSingleInstanceLock()) {
       { type: 'separator' },
       { label: '打开面板', click: showShops },
       { label: '立即同步全部', click: () => runAll('manual') },
+      { label: '全量回刷历史', click: () => runAll('manual-full', { fullRefresh: true }) },
       { label: '添加店铺', click: () => startBind() },
       { type: 'separator' },
       { label: '打开数据目录', click: () => shell.openPath(dataRoot()) },
@@ -204,7 +205,7 @@ if (!app.requestSingleInstanceLock()) {
   }
 
   // ---------- 调度 ----------
-  async function runOne(id, why = 'timer') {
+  async function runOne(id, why = 'timer', { fullRefresh = false } = {}) {
     id = String(id);
     const shop = shops.getShop(id);
     if (!shop || busy.has(id)) return;
@@ -219,7 +220,7 @@ if (!app.requestSingleInstanceLock()) {
         webPreferences: { partition, contextIsolation: true, nodeIntegration: false },
       });
       const ses = session.fromPartition(partition);
-      const result = await runShop({ shop, session: ses, win, cfg, log });
+      const result = await runShop({ shop, session: ses, win, cfg, log, fullRefresh });
       winShops?.webContents.send('shop:progress', { id, status: result?.status || 'done', result });
     } catch (e) {
       log('runOne 异常', e?.message || String(e));
@@ -230,16 +231,30 @@ if (!app.requestSingleInstanceLock()) {
     }
   }
 
+  function fullRefreshDue() {
+    const now = new Date();
+    const hour = Number(cfg.sync.full_refresh_hour ?? 3);
+    if (now.getHours() < hour) return false;
+
+    const interval = Number(cfg.sync.full_refresh_interval_days || 1);
+    const last = shops.getFullRefresh()?.at;
+    if (!last) return true;
+
+    return Date.now() - new Date(last).getTime() >= interval * 86400000;
+  }
+
   let runningAll = false;
-  async function runAll(why) {
+  async function runAll(why, { fullRefresh = null } = {}) {
     if (runningAll) return;
     runningAll = true;
+    const full = fullRefresh ?? fullRefreshDue();
     const list = shops.activeShops();
-    log(`本轮开始（${why}）：${list.length} 个店铺`);
+    log(`本轮开始（${why}）${full ? '全量回刷' : '增量'}：${list.length} 个店铺`);
     for (const s of list) {
-      await runOne(s.id, why);
+      await runOne(s.id, why, { fullRefresh: full });
       await new Promise((r) => setTimeout(r, 3000));   // 多店之间留间隔，模仿人工节奏
     }
+    if (full) shops.markFullRefresh();
     lastRun = new Date().toISOString();
     runningAll = false; refreshTray();
 

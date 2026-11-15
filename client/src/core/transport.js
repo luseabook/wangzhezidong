@@ -22,12 +22,12 @@ export function dayRange(dateStr) {
   };
 }
 
-export function dateList(fromDate, toDate) {
+export function dateList(fromDate, toDate, maxDays = 400) {
   const out = [];
   const p = (n) => String(n).padStart(2, '0');
   let cur = new Date(`${fromDate}T12:00:00+08:00`);
   const end = new Date(`${toDate}T12:00:00+08:00`);
-  while (cur <= end && out.length < 400) {
+  while (cur <= end && out.length < Number(maxDays || 400)) {
     out.push(`${cur.getFullYear()}-${p(cur.getMonth() + 1)}-${p(cur.getDate())}`);
     cur = new Date(cur.getTime() + 86400000);
   }

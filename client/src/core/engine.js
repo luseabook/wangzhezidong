@@ -23,7 +23,12 @@ const COLUMN_MAP = path.join(path.dirname(new URL(import.meta.url).pathname).rep
 export function planDates(shop, cfg, { fullRefresh = false } = {}) {
   const t = today();
   const y = shift(t, -1);
-  if (fullRefresh) return dateList(shift(t, -(cfg.sync.refresh_window_days - 1)), t);
+  if (fullRefresh) {
+    const days = Number(cfg.sync.refresh_window_days || 0);
+    // 0 = 不限窗口：从 history_start_date 全量回刷；正数则沿用最近 N 天。
+    const from = days > 0 ? shift(t, -(days - 1)) : (cfg.sync.history_start_date || shift(t, -44));
+    return dateList(from, t, Number(cfg.sync.max_days_per_run || 4000));
+  }
 
   const dates = [y, t];
 
